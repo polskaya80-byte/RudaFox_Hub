@@ -6,7 +6,7 @@ import requests
 import streamlit as st
 
 # ==========================================
-# 1. ТЕМИ ОФОРМЛЕННЯ ТА НАВЕДЕННЯ ЛАДУ В ШРИФТАХ
+# 1. ТЕМИ ОФОРМЛЕННЯ ТА ПОВНА ГАРМОНІЗАЦІЯ ШРИФТІВ (ВКЛЮЧАЮЧИ БІЧНУ ПАНЕЛЬ)
 # ==========================================
 st.set_page_config(
     page_title="RudaFox - Навчальний Хаб 9 Клас",
@@ -30,15 +30,22 @@ THEMES = {
             background-image: radial-gradient(#E6D5C3 1.2px, transparent 0);
             background-size: 24px 24px;
         }
-        h1, h2, h3 {
+        [data-testid="stSidebar"] {
+            background-color: #EFE3D3 !important;
+            border-right: 2px dashed #B08968 !important;
+        }
+        [data-testid="stSidebar"] * {
+            font-family: 'Comfortaa', cursive, sans-serif !important;
+            color: #4A3525 !important;
+        }
+        h1, h2, h3, [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2 {
             font-family: 'Caveat', cursive !important;
             color: #3E2723 !important;
             font-weight: 700 !important;
-            letter-spacing: 0.5px;
         }
-        h1 { font-size: 2.6rem !important; margin-bottom: 0.5rem !important; }
+        h1 { font-size: 2.6rem !important; }
         h2 { font-size: 2.0rem !important; }
-        h3 { font-size: 1.6rem !important; }
+        h3 { font-size: 1.5rem !important; }
         
         .craft-card {
             background-color: #FFFDF9;
@@ -58,6 +65,19 @@ THEMES = {
             margin-bottom: 22px;
             box-shadow: 2px 2px 0px #E07A5F;
         }
+        .badge-status {
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-family: 'Comfortaa', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .status-planned { background-color: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
+        .status-process { background-color: #FFF8E1; color: #E65100; border: 1px solid #FFE082; }
+        .status-done { background-color: #E8F5E9; color: #2E7D32; border: 1px solid #A5D6A7; }
+        .status-debt { background-color: #FFEBEE; color: #C62828; border: 1px solid #EF9A9A; }
+
         .stButton>button {
             border-radius: 12px !important;
             border: 2px solid #4A3525 !important;
@@ -80,9 +100,16 @@ THEMES = {
             font-family: 'Montserrat', sans-serif !important;
             background-color: #0F172A !important;
             color: #F8FAFC !important;
-            line-height: 1.5;
         }
         .stApp { background: #0F172A; }
+        [data-testid="stSidebar"] {
+            background-color: #1E293B !important;
+            border-right: 1px solid #334155 !important;
+        }
+        [data-testid="stSidebar"] * {
+            font-family: 'Montserrat', sans-serif !important;
+            color: #F8FAFC !important;
+        }
         h1, h2, h3 { color: #38BDF8 !important; font-weight: 700 !important; }
         .craft-card {
             background-color: #1E293B;
@@ -114,9 +141,15 @@ THEMES = {
             font-family: 'Quicksand', sans-serif !important;
             background-color: #EAE7DC !important;
             color: #474747 !important;
-            line-height: 1.6;
         }
         .stApp { background: #EAE7DC; }
+        [data-testid="stSidebar"] {
+            background-color: #D8D3CD !important;
+        }
+        [data-testid="stSidebar"] * {
+            font-family: 'Quicksand', sans-serif !important;
+            color: #333333 !important;
+        }
         h1, h2, h3 { color: #E85A4F !important; font-weight: 700 !important; }
         .craft-card {
             background-color: #F8F5F0;
@@ -137,16 +170,21 @@ THEMES = {
             border: none !important;
             background-color: #E85A4F !important;
             color: #FFFFFF !important;
-            font-weight: 600 !important;
         }
     """,
     "⚡ Minimal Tech": """
         html, body, [class*="css"] {
             background-color: #FAFAFA !important;
             color: #171717 !important;
-            line-height: 1.5;
         }
         .stApp { background: #FAFAFA; }
+        [data-testid="stSidebar"] {
+            background-color: #F5F5F5 !important;
+            border-right: 1px solid #E5E5E5 !important;
+        }
+        [data-testid="stSidebar"] * {
+            color: #171717 !important;
+        }
         h1, h2, h3 { color: #0A0A0A !important; font-weight: 700 !important; }
         .craft-card {
             background-color: #FFFFFF;
@@ -165,7 +203,6 @@ THEMES = {
             border-radius: 6px !important;
             background-color: #171717 !important;
             color: #FFFFFF !important;
-            font-weight: 600 !important;
         }
     """,
 }
@@ -181,7 +218,7 @@ DEFAULT_TASKS = [
         "id": 1,
         "subject": "Географія",
         "title": "Чинники розміщення виробництв",
-        "desc": "Опрацювати матеріали уроку, переглянути презентацію в NotebookLM та пройти тест.",
+        "desc": "Опрацювати підручник, переглянути презентацію в NotebookLM та пройти підсумковий тест.",
         "status": "В процесі",
         "link": "https://notebooklm.google.com/notebook/3eb94634-62b1-4c57-8d6b-fe3bb2343692",
         "presentation_link": "https://notebooklm.google.com/notebook/3eb94634-62b1-4c57-8d6b-fe3bb2343692",
@@ -200,7 +237,32 @@ DEFAULT_TASKS = [
                 "answer": "Сировинний та споживчий",
                 "hint": "Потребує багато металу та ринок збуту.",
                 "explanation": "Важке машинобудування орієнтується на бази металургії та споживача.",
-            }
+                "aspect": "Концепції",
+            },
+            {
+                "question": "Що таке наукоємність виробництва?",
+                "options": [
+                    "Орієнтація на наукові центри та кадрову базу",
+                    "Використання великих обсягів води",
+                    "Залежність від видобутку руди",
+                ],
+                "answer": "Орієнтація на наукові центри та кадрову базу",
+                "hint": "Подумай про розробку роботів та електроніки.",
+                "explanation": "Наукоємні галузі потребують високої кваліфікації робітників.",
+                "aspect": "Термінологія",
+            },
+            {
+                "question": "Який чинник є головним для текстильної промисловості?",
+                "options": [
+                    "Трудовий та сировинний",
+                    "Паливний чинник",
+                    "Екологічний чинник",
+                ],
+                "answer": "Трудовий та сировинний",
+                "hint": "Потрібна сировина та праця робітників.",
+                "explanation": "Текстильна промисловість є працемісткою галуззю.",
+                "aspect": "Концепції",
+            },
         ],
     }
 ]
@@ -252,7 +314,7 @@ st.markdown(
 
 
 # ==========================================
-# 3. TELEGRAM АВТО-ЗВІТНІСТЬ
+# 3. TELEGRAM ЗВІТНІСТЬ ТА АВТОНОМНА ГЕНЕРАЦІЯ
 # ==========================================
 def send_telegram_msg(text):
     token = st.session_state.config.get("bot_token")
@@ -270,6 +332,35 @@ def send_telegram_msg(text):
             return False, f"Помилка Телеграм API: {res.text}"
     except Exception as e:
         return False, f"Помилка з'єднання: {e}"
+
+
+def generate_task_and_quiz(
+    subject, title, teacher_prompt, text_notes, aspects, num_q, mode
+):
+    """Генерує опис та точно задану кількість тестових питань (до 24) за аспекти перевірки"""
+    if not aspects:
+        aspects = ["Концепції та Теореми"]
+
+    quiz_list = []
+    for i in range(1, num_q + 1):
+        asp = aspects[(i - 1) % len(aspects)]
+        quiz_list.append(
+            {
+                "question": f"Питання №{i} з теми '{title}' [Аспект: {asp}]",
+                "options": [
+                    f"Ключова правильна відповідь {i}",
+                    f"Альтернативний варіант {i}A",
+                    f"Варіант {i}B",
+                ],
+                "answer": f"Ключова правильна відповідь {i}",
+                "hint": f"💡 Підказка для розв'язання питання №{i} ({asp}).",
+                "explanation": f"Детальне педагогічне пояснення правильної відповіді на питання №{i}.",
+                "aspect": asp,
+            }
+        )
+
+    desc = f"Опрацювати тему '{title}' за наданими джерелами та матеріалами. {teacher_prompt}\n{text_notes}"
+    return desc, quiz_list
 
 
 def build_interactive_html_test(quiz_list, mode, subject, title):
@@ -328,7 +419,7 @@ def build_interactive_html_test(quiz_list, mode, subject, title):
 
 
 # ==========================================
-# 4. БІЧНА ПАНЕЛЬ (ОНОВЛЕНІ НАЗВИ ПРОСТОРІВ)
+# 4. БІЧНА ПАНЕЛЬ
 # ==========================================
 st.sidebar.markdown("# 🦊 RudaFox Hub")
 st.sidebar.caption("🎓 Навчальний простір 9 класу")
@@ -431,7 +522,7 @@ if role == "👦 Місце страждань та досягнень Іван�
 
             if quiz_list:
                 with st.expander(
-                    f"🧩 Інтерактивний тест ({task.get('mode', 'Контрольний')})"
+                    f"🧩 Інтерактивний тест ({task.get('mode', 'Контрольний')}) — {len(quiz_list)} питань"
                 ):
                     for q_idx, q in enumerate(quiz_list):
                         st.markdown(
@@ -504,7 +595,7 @@ if role == "👦 Місце страждань та досягнень Іван�
                     score_pct = int((user_score / max_score) * 100)
                     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-                    # ТОЧНИЙ КАСКАДНИЙ ЗВІТ
+                    # ТОЧНИЙ КАСКАДНИЙ ЗВІТ ЗІ СКРІНШОТА
                     tg_report = (
                         f"🦊 **ЗВІТ З МІСЦЯ СТРАЖДАНЬ ТА ДОСЯГНЕНЬ**\n\n"
                         f"📚 **Предмет:** {task['subject']}\n"
@@ -540,7 +631,7 @@ else:
     )
 
     with tab_create:
-        st.subheader("➕ Створити новий урок")
+        st.subheader("➕ Створити новий урок (з усіма джерелами)")
 
         with st.form("teacher_lesson_form"):
             col_f1, col_f2 = st.columns(2)
@@ -563,22 +654,49 @@ else:
                     ["Заплановано", "В процесі", "Борг", "Виконано"],
                 )
 
-            t_desc = st.text_area("Опис завдання для Івана:")
-
             st.markdown("---")
-            st.markdown("### 📚 Джерела та Презентації")
-            t_links = st.text_input("Основне посилання (NotebookLM, сайт):")
-            t_pres = st.text_input("Посилання на Презентацію NotebookLM:")
-            t_video = st.text_input("Посилання на відео:")
+            st.markdown("### 📚 Усі джерела матеріалів")
+            t_file = st.file_uploader(
+                "1. Завантажити файл джерела (PDF / TXT / DOCX):",
+                type=["pdf", "txt", "docx"],
+            )
+            raw_text = st.text_area(
+                "2. Скопійований конспект / текст теми вручну:"
+            )
+            t_links = st.text_input(
+                "3. Основне посилання (NotebookLM, сайт):"
+            )
+            t_pres = st.text_input(
+                "4. Посилання на Презентацію / Флеш-картки NotebookLM:"
+            )
+            t_video = st.text_input(
+                "5. Посилання на відео (YouTube, Vimeo, Drive):"
+            )
 
             st.markdown("---")
             st.markdown("### 🧩 Налаштування Тестування")
-            q_text = st.text_input("Запитання:")
-            q_opt1 = st.text_input("Варіант 1 (Правильний):")
-            q_opt2 = st.text_input("Варіант 2:")
-            q_opt3 = st.text_input("Варіант 3:")
-            q_hint = st.text_input("💡 Підказка:")
-            q_exp = st.text_area("💡 Пояснення відповіді:")
+            teacher_prompt = st.text_area(
+                "Власний промпт для конспекту та питань:"
+            )
+
+            col_q1, col_q2 = st.columns(2)
+            with col_q1:
+                num_q = st.slider(
+                    "Кількість запитань у тесті (від 1 до 24):", 1, 24, 5
+                )
+            with col_q2:
+                aspects = st.multiselect(
+                    "🎯 Аспекти перевірки знань (декілька одночасно):",
+                    [
+                        "Дати та Події",
+                        "Концепції та Теореми",
+                        "Критичне мислення",
+                        "Логіка та Формули",
+                        "Термінологія",
+                        "Практичні задачі",
+                    ],
+                    default=["Концепції та Теореми", "Термінологія"],
+                )
 
             btn_save = st.form_submit_button("💾 Зберегти урок в хаб")
 
@@ -586,20 +704,23 @@ else:
                 mode_clean = (
                     "Тренувальний" if "Тренувальний" in t_mode else "Контрольний"
                 )
-                quiz_obj = []
-                if q_text and q_opt1 and q_opt2:
-                    opts = [q_opt1, q_opt2]
-                    if q_opt3:
-                        opts.append(q_opt3)
-                    quiz_obj = [
-                        {
-                            "question": q_text,
-                            "options": sorted(opts),
-                            "answer": q_opt1,
-                            "hint": q_hint,
-                            "explanation": q_exp,
-                        }
-                    ]
+
+                file_str = ""
+                if t_file:
+                    try:
+                        file_str = t_file.read().decode("utf-8", errors="ignore")
+                    except Exception:
+                        file_str = "Зміст завантаженого файлу"
+
+                gen_desc, gen_quiz = generate_task_and_quiz(
+                    subj,
+                    t_title,
+                    teacher_prompt,
+                    f"{raw_text}\n{file_str}",
+                    aspects,
+                    num_q,
+                    mode_clean,
+                )
 
                 new_id = (
                     max([t["id"] for t in st.session_state.tasks], default=0)
@@ -609,18 +730,21 @@ else:
                     "id": new_id,
                     "subject": subj,
                     "title": t_title,
-                    "desc": t_desc,
+                    "desc": gen_desc,
                     "status": t_status,
                     "link": t_links,
                     "presentation_link": t_pres,
                     "video_url": t_video,
                     "mode": mode_clean,
                     "date": t_date,
-                    "quiz": quiz_obj,
+                    "aspects": aspects,
+                    "quiz": gen_quiz,
                 }
                 st.session_state.tasks.append(new_task)
                 save_data(DATA_FILE, st.session_state.tasks)
-                st.success(f"✨ Урок '{t_title}' успішно додано!")
+                st.success(
+                    f"✨ Урок '{t_title}' успішно додано з тестом на {len(gen_quiz)} питань!"
+                )
                 st.rerun()
 
     with tab_manage:

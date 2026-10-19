@@ -6,307 +6,6 @@ import requests
 import streamlit as st
 
 # ==========================================
-# 1. НАЛАШТУВАННЯ СТОРІНКИ ТА СКЕТЧ-ДИЗАЙНУ (CSS)
-# ==========================================
-st.set_page_config(
-    page_title="RudaFox - Навчальний Хаб 9 Клас",
-    page_icon="🦊",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
-
-st.markdown(
-    """
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Comfortaa:wght@400;600;700&display=swap');
-
-    html, body, [class*="css"]  {
-        font-family: 'Comfortaa', cursive, sans-serif;
-        background-color: #F5EBE0 !important;
-        color: #4A3525;
-    }
-
-    .stApp {
-        background: #F5EBE0;
-        background-image: radial-gradient(#E6D5C3 1px, transparent 0);
-        background-size: 24px 24px;
-    }
-
-    h1, h2, h3, h4 {
-        font-family: 'Caveat', cursive !important;
-        color: #3E2723 !important;
-        font-weight: 700 !important;
-    }
-
-    h1 { font-size: 2.8rem !important; }
-    h2 { font-size: 2.2rem !important; }
-    h3 { font-size: 1.8rem !important; }
-
-    .craft-card {
-        background-color: #FFFDF9;
-        border: 2px dashed #B08968;
-        border-radius: 16px;
-        padding: 20px;
-        margin-bottom: 16px;
-        box-shadow: 4px 4px 0px #DDB892;
-    }
-
-    .quote-craft {
-        background-color: #FFF3E0;
-        border: 2px solid #E07A5F;
-        border-radius: 14px;
-        padding: 16px 20px;
-        font-family: 'Caveat', cursive;
-        font-size: 1.5rem;
-        color: #5C3D2E;
-        box-shadow: 3px 3px 0px #E07A5F;
-        margin-bottom: 20px;
-    }
-
-    .badge-status {
-        padding: 6px 14px;
-        border-radius: 12px;
-        font-family: 'Comfortaa', sans-serif;
-        font-size: 0.85rem;
-        font-weight: 700;
-        display: inline-block;
-    }
-    .status-planned { background-color: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
-    .status-process { background-color: #FFF8E1; color: #E65100; border: 1px solid #FFE082; }
-    .status-done { background-color: #E8F5E9; color: #2E7D32; border: 1px solid #A5D6A7; }
-    .status-debt { background-color: #FFEBEE; color: #C62828; border: 1px solid #EF9A9A; }
-
-    .stButton>button {
-        border-radius: 12px !important;
-        border: 2px solid #4A3525 !important;
-        background-color: #81B29A !important;
-        color: #FFFFFF !important;
-        font-family: 'Comfortaa', sans-serif !important;
-        font-weight: 700 !important;
-        box-shadow: 3px 3px 0px #4A3525 !important;
-        transition: all 0.2s ease;
-    }
-    .stButton>button:hover {
-        transform: translate(-2px, -2px);
-        box-shadow: 5px 5px 0px #4A3525 !important;
-        background-color: #6B8E23 !important;
-    }
-    </style>
-""",
-    unsafe_allow_html=True,
-)
-
-# ==========================================
-# 2. БАЗА ДАНИХ ТА НАЛАШТУВАННЯ
-# ==========================================
-DATA_FILE = "tasks_db.json"
-CONFIG_FILE = "config.json"
-
-DEFAULT_TASKS = [
-    {
-        "id": 1,
-        "subject": "Географія",
-        "title": "Чинники розміщення виробництв",
-        "desc": "Опрацювати матеріали уроку та пройти підсумковий тест.",
-        "status": "В процесі",
-        "link": "https://notebooklm.google.com/notebook/3eb94634-62b1-4c57-8d6b-fe3bb2343692",
-        "date": "2026-10-19",
-        "aspects": ["Концепції", "Термінологія"],
-        "mode": "Контрольний",
-        "quiz": {
-            "question": "Який чинник є вирішальним для розміщення підприємств важкого машинобудування?",
-            "options": ["Сировинний та споживчий", "Трудовий", "Водний"],
-            "answer": "Сировинний та споживчий",
-            "hint": "Важке машинобудування потребує багато металу!",
-            "explanation": "Важке машинобудування орієнтується на метал (сировину) та споживача.",
-        },
-    },
-    {
-        "id": 2,
-        "subject": "Всесвітня історія",
-        "title": "Промисловий переворот та формування індустріального суспільства",
-        "desc": "Прочитати Параграф підручника 9 класу та виконати завдання.",
-        "status": "Заплановано",
-        "link": "https://gemini.google.com/notebook/9c229291-3cb0-4210-a17c-12126891be8a",
-        "date": "2026-10-20",
-        "aspects": ["Дати та Події"],
-        "mode": "Тренувальний",
-        "quiz": {
-            "question": "Яка країна стала 'майстернею світу' під час промислового перевороту?",
-            "options": ["Франція", "Велика Британія", "США"],
-            "answer": "Велика Британія",
-            "hint": "Батьківщина парового двигуна.",
-            "explanation": "Велика Британія першою здійснила промисловий переворот.",
-        },
-    },
-]
-
-MOTIVATIONAL_QUOTES = [
-    "«Майбутнє належить тим, хто вірить у красу своїх мрій.» — Кішка Васька стежить за твоїм прогресом! 🐾",
-    "«Лайфхак для 9-класника: 25 хвилин фокусу = вільний вечір без боргів!» 🎮⚡",
-    "«Помилка — це просто інструкція, як зробити краще з другого разу!» 💡",
-    "«Кішка Васька каже: закривай квест зараз, щоб увечері мати час для відпочинку!» 🐱✨",
-]
-
-
-def load_data(filename, default):
-    if os.path.exists(filename):
-        try:
-            with open(filename, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            return default
-    return default
-
-
-def save_data(filename, data):
-    with open(filename, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
-
-if "tasks" not in st.session_state:
-    st.session_state.tasks = load_data(DATA_FILE, DEFAULT_TASKS)
-
-if "config" not in st.session_state:
-    st.session_state.config = load_data(
-        CONFIG_FILE, {"bot_token": "", "chat_id": ""}
-    )
-
-
-def send_telegram_msg(text):
-    token = st.session_state.config.get("bot_token")
-    chat_id = st.session_state.config.get("chat_id")
-    if not token or not chat_id:
-        return (
-            False,
-            "⚠️ Вкажіть Telegram Bot Token та Chat ID у Кабінеті мами!",
-        )
-    try:
-        url = f"https://api.telegram.org/bot{token}/sendMessage"
-        res = requests.post(
-            url, json={"chat_id": chat_id, "text": text, "parse_mode": "Markdown"}
-        )
-        if res.status_code == 200:
-            return True, "🚀 Сповіщення успішно надіслано в Телеграм!"
-        else:
-            return False, f"Помилка Telegram API: {res.text}"
-    except Exception as e:
-        return False, f"Помилка з'єднання: {e}"
-
-
-# ==========================================
-# 3. БІЧНА ПАНЕЛЬ
-# ==========================================
-st.sidebar.markdown("# 🦊 RudaFox Hub")
-st.sidebar.caption("🎓 Навчальний простір 9 класу")
-
-role = st.sidebar.radio(
-    "📍 Оберіть кабінет:",
-    ["👦 Кабінет Івана (Учень)", "👩‍🏫 Кабінет мами (Конструктор & Налаштування)"],
-)
-
-SUBJECTS = [
-    "Усі предмети",
-    "Алгебра",
-    "Геометрія",
-    "Фізика",
-    "Хімія",
-    "Біологія",
-    "Географія",
-    "Правознавство",
-    "Історія України",
-    "Всесвітня історія",
-    "Українська література",
-    "Зарубіжна література",
-    "English",
-    "Інформатика",
-]
-
-# ==========================================
-# 4. КАБІНЕТ ІВАНА
-# ==========================================
-if role == "👦 Кабінет Івана (Учень)":
-    st.title("📜 Щоденник навчальних квестів Івана — 9 Клас")
-
-    st.markdown(
-        f'<div class="quote-craft">💬 <b>Порада від кішки Васьки:</b><br>{random.choice(MOTIVATIONAL_QUOTES)}</div>',
-        unsafe_allow_html=True,
-    )
-
-    debts_count = sum(
-        1 for t in st.session_state.tasks if t["status"] == "Борг"
-    )
-    done_count = sum(
-        1 for t in st.session_state.tasks if t["status"] == "Виконано"
-    )
-    total_count = len(st.session_state.tasks)
-
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Уроки на сьогодні", total_count)
-    col2.metric("Завершено ✅", done_count)
-    col3.metric("Хвости 🚨", debts_count)
-
-    st.markdown("---")
-    selected_subject = st.selectbox("🔍 Фільтр за предметом:", SUBJECTS)
-
-    filtered = st.session_state.tasks
-    if selected_subject != "Усі предмети":
-        filtered = [t for t in filtered if t["subject"] == selected_subject]
-
-    st.subheader("📚 Твої квести та уроки")
-
-    if not filtered:
-        st.info("У цій категорії поки немає завдань.")
-
-    for task in filtered:
-        st.markdown('<div class="craft-card">', unsafe_allow_html=True)
-        col_a, col_b = st.columns([3, 1])
-
-        with col_a:
-            status_cls = {
-                "Заплановано": "status-planned",
-                "В процесі": "status-process",
-                "Виконано": "status-done",
-                "Борг": "status-debt",
-            }.get(task["status"], "")
-
-            st.markdown(
-                f"### {task['subject']}: {task['title']} <span class='badge-status {status_cls}'>{task['status']}</span>",
-                unsafe_allow_html=True,
-            )
-            st.write(f"📝 **Завдання:** {task['desc']}")
-
-            if task.get("link"):
-                st.markdown(f"🔗 [Перейти до матеріалів]({task['link']})")
-
-            # Блок проходження тесту
-            score_text = "100% (1/1)"
-            if task.get("quiz"):
-                with st.expander("🧩 Пройти інтерактивний тест"):
-                    q = task["quiz"]
-                    u_ans = st.radio(
-                        q["question"], q["options"], key=f"q_ans_{task['id']}"
-                    )
-
-                    col_q1, col_q2 = st.columns(2)
-                    with col_q1:
-                        if st.button("💡 Підказка", key=f"btn_hint_{task['id']}"):
-                            st.info(f"🔑 {q.get('hint', 'Підказка відсутня')}")
-                    with col_q2:
-                        if st.button(
-                            "Перевірити відповідь", key=f"btn_chk_{task['id']}"
-                        ):
-                            if u_ans == q["answer"]:
-                                st.success("✨ Абсолютно вірно!")
-                                score_text = "100% (1/1)"
-                         import json
-import os
-import random
-from datetime import datetime
-import requests
-import streamlit as st
-
-# ==========================================
 # 1. ТЕМИ ОФОРМЛЕННЯ ТА ДИНАМІЧНИЙ CSS
 # ==========================================
 st.set_page_config(
@@ -426,7 +125,6 @@ if "config" not in st.session_state:
         },
     )
 
-# Застосування обраної теми та кастомного CSS
 selected_theme = st.session_state.config.get("theme", "📜 Крафт & Скетч")
 custom_css = st.session_state.config.get("custom_css", "")
 
@@ -513,7 +211,6 @@ def generate_lesson_with_claude(
         except Exception:
             pass
 
-    # Резервний локальний генератор
     questions = []
     for i in range(1, num_questions + 1):
         questions.append(
@@ -535,56 +232,57 @@ def generate_lesson_with_claude(
 
 def build_interactive_html_test(quiz_list, mode, subject, title):
     quiz_json = json.dumps(quiz_list, ensure_ascii=False)
-    return f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <style>
-            body {{ font-family: sans-serif; background: #0F172A; color: #F8FAFC; padding: 20px; }}
-            .card {{ background: #1E293B; border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid #334155; }}
-            .btn {{ background: #0284C7; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }}
-            .hint {{ background: #312E81; padding: 8px; border-radius: 4px; margin-top: 8px; display: none; }}
-            .exp {{ padding: 8px; border-radius: 4px; margin-top: 8px; display: none; }}
-        </style>
-    </head>
-    <body>
-        <h2>🧩 Тест ({mode}): {subject} - {title}</h2>
-        <div id="quiz-root"></div>
-        <script>
-            const data = {quiz_json};
-            const root = document.getElementById('quiz-root');
-            data.forEach((q, i) => {{
-                let div = document.createElement('div');
-                div.className = 'card';
-                let html = '<b>Q' + (i+1) + ': ' + q.question + '</b><br><br>';
-                q.options.forEach(opt => {{
-                    html += '<label style="display:block;margin:4px 0;"><input type="radio" name="q_'+i+'" value="'+opt+'"> '+opt+'</label>';
-                }});
-                html += '<button class="btn" style="background:#4338CA;margin-right:8px;" onclick="document.getElementById(\\'h_'+i+'\\').style.display=\\'block\\'">💡 Підказка</button>';
-                html += '<button class="btn" onclick="check('+i+')">Перевірити</button>';
-                html += '<div id="h_'+i+'" class="hint">🔑 ' + (q.hint || '') + '</div>';
-                html += '<div id="e_'+i+'" class="exp"></div>';
-                div.innerHTML = html;
-                root.appendChild(div);
-            }});
-            function check(i) {{
-                let sel = document.querySelector('input[name="q_'+i+'"]:checked');
-                let exp = document.getElementById('e_'+i);
-                if (!sel) return alert('Оберіть відповідь!');
-                if (sel.value === data[i].answer) {{
-                    exp.innerHTML = '✨ Правильно! ' + (data[i].explanation || '');
-                    exp.style.background = '#065F46';
-                }} else {{
-                    exp.innerHTML = '❌ Невірно. Правильна відповідь: ' + data[i].answer + '. ' + (data[i].explanation || '');
-                    exp.style.background = '#991B1B';
-                }}
-                exp.style.display = 'block';
-            }}
-        </script>
-    </body>
-    </html>
-    """
+    html_code = (
+        '<!DOCTYPE html>\n'
+        '<html>\n'
+        '<head>\n'
+        '    <meta charset="utf-8">\n'
+        '    <style>\n'
+        '        body { font-family: sans-serif; background: #0F172A; color: #F8FAFC; padding: 20px; }\n'
+        '        .card { background: #1E293B; border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid #334155; }\n'
+        '        .btn { background: #0284C7; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }\n'
+        '        .hint { background: #312E81; padding: 8px; border-radius: 4px; margin-top: 8px; display: none; }\n'
+        '        .exp { padding: 8px; border-radius: 4px; margin-top: 8px; display: none; }\n'
+        '    </style>\n'
+        '</head>\n'
+        '<body>\n'
+        f'    <h2>🧩 Тест ({mode}): {subject} - {title}</h2>\n'
+        '    <div id="quiz-root"></div>\n'
+        '    <script>\n'
+        f'        const data = {quiz_json};\n'
+        '        const root = document.getElementById("quiz-root");\n'
+        '        data.forEach((q, i) => {\n'
+        '            let div = document.createElement("div");\n'
+        '            div.className = "card";\n'
+        '            let html = "<b>Q" + (i+1) + ": " + q.question + "</b><br><br>";\n'
+        '            q.options.forEach(opt => {\n'
+        '                html += \'<label style="display:block;margin:4px 0;"><input type="radio" name="q_\'+i+\'" value="\'+opt+\'"> \'+opt+\'</label>\';\n'
+        '            });\n'
+        '            html += \'<button class="btn" style="background:#4338CA;margin-right:8px;" onclick="document.getElementById(\\\\\'h_\'+i+\'\\\\\').style.display=\\\\\'block\\\\\'">💡 Підказка</button>\';\n'
+        '            html += \'<button class="btn" onclick="check(\'+i+\')">Перевірити</button>\';\n'
+        '            html += \'<div id="h_\'+i+\'" class="hint">🔑 \' + (q.hint || \'\') + \'</div>\';\n'
+        '            html += \'<div id="e_\'+i+\'" class="exp"></div>\';\n'
+        '            div.innerHTML = html;\n'
+        '            root.appendChild(div);\n'
+        '        });\n'
+        '        function check(i) {\n'
+        '            let sel = document.querySelector(\'input[name="q_\'+i+\'"]:checked\');\n'
+        '            let exp = document.getElementById(\'e_\'+i);\n'
+        '            if (!sel) return alert(\'Оберіть відповідь!\');\n'
+        '            if (sel.value === data[i].answer) {\n'
+        '                exp.innerHTML = \'✨ Правильно! \' + (data[i].explanation || \'\');\n'
+        '                exp.style.background = \'#065F46\';\n'
+        '            } else {\n'
+        '                exp.innerHTML = \'❌ Невірно. Правильна відповідь: \' + data[i].answer + \'. \' + (data[i].explanation || \'\');\n'
+        '                exp.style.background = \'#991B1B\';\n'
+        '            }\n'
+        '            exp.style.display = \'block\';\n'
+        '        }\n'
+        '    </script>\n'
+        '</body>\n'
+        '</html>\n'
+    )
+    return html_code
 
 
 # ==========================================
@@ -756,7 +454,6 @@ if role == "👦 Кабінет Івана (Учень)":
                     score_pct = int((user_score / max_score) * 100)
                     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-                    # ТОЧНИЙ ФОРМАТ ЗВІТУ ЗІ СКРІНШОТА
                     tg_report = (
                         f"🦊 **ЗВІТ З МІСЦЯ СТРАЖДАНЬ ТА ДОСЯГНЕНЬ**\n\n"
                         f"📚 **Предмет:** {task['subject']}\n"
@@ -777,7 +474,7 @@ if role == "👦 Кабінет Івана (Учень)":
         st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
-# 6. КАБІНЕТ МАМИ (КОНСТРУКТОР ТА КАСТОМІЗАЦІЯ ДИЗАЙНУ)
+# 6. КАБІНЕТ МАМИ
 # ==========================================
 else:
     st.title("👩‍🏫 Кабінет мами — «Місце сили RudaFox»")
@@ -791,7 +488,6 @@ else:
         ]
     )
 
-    # Вкладка 1: Генератор
     with tab_create:
         st.subheader("➕ Створити / Згенерувати урок")
 
@@ -886,7 +582,6 @@ else:
                 st.success(f"✨ Урок '{t_title}' успішно створено!")
                 st.rerun()
 
-    # Вкладка 2: Списки
     with tab_manage:
         st.subheader("📋 Список усіх уроків")
         for idx, task in enumerate(st.session_state.tasks):
@@ -898,12 +593,9 @@ else:
                 save_data(DATA_FILE, st.session_state.tasks)
                 st.rerun()
 
-    # Вкладка 3: Кастомізація дизайну
     with tab_style:
         st.subheader("🎨 Кастомізація дизайну та теми оформлення")
-        st.write(
-            "Оберіть готову тему або задайте власний стильовий промпт/CSS:"
-        )
+        st.write("Оберіть готову тему або задайте власний стильовий промпт/CSS:")
 
         with st.form("style_form"):
             theme_choice = st.selectbox(
@@ -925,7 +617,6 @@ else:
                 st.success("Новий дизайн застосовано!")
                 st.rerun()
 
-    # Вкладка 4: Налаштування
     with tab_settings:
         st.subheader("⚙️ Налаштування API та Telegram")
         with st.form("settings_form"):

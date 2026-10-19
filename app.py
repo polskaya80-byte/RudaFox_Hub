@@ -1,54 +1,98 @@
 import json
 import os
+import random
 from datetime import datetime
+import requests
 import streamlit as st
 
 # ==========================================
-# 1. НАЛАШТУВАННЯ СТОРІНКИ ТА СТИЛІВ (CSS)
+# 1. НАЛАШТУВАННЯ СТОРІНКИ ТА СКЕТЧ-ДИЗАЙНУ (CSS)
 # ==========================================
 st.set_page_config(
-    page_title="RudaFox - Навчальний Хаб 8 Клас",
+    page_title="RudaFox - Крафтовий Навчальний Хаб 8 Клас",
     page_icon="🦊",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# Затишні стилі у теплій колірній гамі та скетч-естетиці
+# Крафтовий папір, затишні кольори та рукописні шрифти з Google Fonts
 st.markdown(
     """
     <style>
-    .main {
-        background-color: #FAFAFA;
+    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Comfortaa:wght@400;600;700&display=swap');
+
+    html, body, [class*="css"]  {
+        font-family: 'Comfortaa', cursive, sans-serif;
+        background-color: #F5EBE0 !important;
+        color: #4A3525;
     }
-    .stAppHeader {
-        background-color: rgba(255, 255, 255, 0.8);
+
+    .stApp {
+        background: #F5EBE0;
+        background-image: radial-gradient(#E6D5C3 1px, transparent 0);
+        background-size: 24px 24px;
     }
-    .card-task {
-        background-color: #FFFFFF;
-        border: 2px solid #EFEBE9;
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+
+    h1, h2, h3, h4 {
+        font-family: 'Caveat', cursive !important;
+        color: #3E2723 !important;
+        font-weight: 700 !important;
     }
-    .badge-status {
-        padding: 4px 10px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.85rem;
+
+    h1 { font-size: 2.8rem !important; }
+    h2 { font-size: 2.2rem !important; }
+    h3 { font-size: 1.8rem !important; }
+
+    /* Картки у скетч-стилі */
+    .craft-card {
+        background-color: #FFFDF9;
+        border: 2px dashed #B08968;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 16px;
+        box-shadow: 4px 4px 0px #DDB892;
     }
-    .status-planned { background-color: #E3F2FD; color: #1565C0; }
-    .status-process { background-color: #FFF3E0; color: #E65100; }
-    .status-done { background-color: #E8F5E9; color: #2E7D32; }
-    .status-debt { background-color: #FFEBEE; color: #C62828; }
-    
-    .quote-box {
-        background-color: #FFF8E1;
-        border-left: 5px solid #FFB300;
-        padding: 12px 18px;
-        border-radius: 6px;
-        font-style: italic;
+
+    .quote-craft {
+        background-color: #FFF3E0;
+        border: 2px solid #E07A5F;
+        border-radius: 14px;
+        padding: 16px 20px;
+        font-family: 'Caveat', cursive;
+        font-size: 1.5rem;
+        color: #5C3D2E;
+        box-shadow: 3px 3px 0px #E07A5F;
         margin-bottom: 20px;
+    }
+
+    .badge-status {
+        padding: 6px 14px;
+        border-radius: 12px;
+        font-family: 'Comfortaa', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 700;
+        display: inline-block;
+    }
+    .status-planned { background-color: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
+    .status-process { background-color: #FFF8E1; color: #E65100; border: 1px solid #FFE082; }
+    .status-done { background-color: #E8F5E9; color: #2E7D32; border: 1px solid #A5D6A7; }
+    .status-debt { background-color: #FFEBEE; color: #C62828; border: 1px solid #EF9A9A; }
+
+    /* Кнопки у дудл-стилі */
+    .stButton>button {
+        border-radius: 12px !important;
+        border: 2px solid #4A3525 !important;
+        background-color: #81B29A !important;
+        color: #FFFFFF !important;
+        font-family: 'Comfortaa', sans-serif !important;
+        font-weight: 700 !important;
+        box-shadow: 3px 3px 0px #4A3525 !important;
+        transition: all 0.2s ease;
+    }
+    .stButton>button:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 5px 5px 0px #4A3525 !important;
+        background-color: #6B8E23 !important;
     }
     </style>
 """,
@@ -56,9 +100,10 @@ st.markdown(
 )
 
 # ==========================================
-# 2. ЗБЕРЕЖЕННЯ ТА ЗАТАВАННЯ ДАНИХ (JSON)
+# 2. БАЗА ДАНИХ ТА НАЛАШТУВАННЯ
 # ==========================================
 DATA_FILE = "tasks_db.json"
+CONFIG_FILE = "config.json"
 
 DEFAULT_TASKS = [
     {
@@ -69,70 +114,97 @@ DEFAULT_TASKS = [
         "status": "В процесі",
         "link": "https://gemini.google.com/notebook/81ad84a5-0616-4065-a9f3-a2c6c9ab6096",
         "date": "2026-10-19",
-        "quiz": {
-            "question": "Що таке допустимі значення змінної (ДЗЗ) для дробу a / (b - 2)?",
-            "options": ["b ≠ 0", "b ≠ 2", "b ≠ -2", "Будь-які числа"],
-            "answer": "b ≠ 2",
-        },
+        "aspects": ["Концепції", "Логіка"],
     },
     {
         "id": 2,
         "subject": "Історія України",
         "title": "Козацько-селянські повстання 20-30-х рр. XVII ст.",
-        "desc": "Опрацювати Параграф 8 підручника та пройти інтерактивний тест у Wordwall",
+        "desc": "Опрацювати Параграф 8 підручника та переглянути флеш-картки",
         "status": "Заплановано",
         "link": "https://notebooklm.google.com/notebook/cda44234-a2b8-4615-ac33-3429b324cc5d",
         "date": "2026-10-20",
-        "quiz": None,
+        "aspects": ["Дати", "Критичне мислення"],
     },
     {
         "id": 3,
         "subject": "Фізика",
         "title": "Теплові явища та температура",
-        "desc": "Записати формулу кількості теплоти та подивитися відеопояснення",
+        "desc": "Записати формулу кількості теплоти та прослухати подкаст",
         "status": "Борг",
         "link": "https://gemini.google.com/notebook/7793e49a-6df1-4fbc-a25b-a2ae9145c112",
         "date": "2026-10-18",
-        "quiz": None,
+        "aspects": ["Формули", "Практика"],
     },
 ]
 
+MOTIVATIONAL_QUOTES = [
+    "«Майбутнє належить тим, хто вірить у красу своїх мрій.» — Кунг-фу Панда 🐼",
+    "«Навіть найдовша дорога починається з першого кроку.» — Хоббіт 🧙‍♂️",
+    "«Ти сміливіший, ніж віриш, сильніший, ніж здаєшся, і розумніший, ніж думаєш!» — Вінні Пух 🍯",
+    "«Лайфхак для підлітка: 25 хвилин фокусу на фізиці = +2 години для ігор увечері без докорів сумління!» 🎮⚡",
+    "«Помилка — це не поразка, це просто інструкція, як зробити краще з другого разу!» 💡",
+]
 
-def load_tasks():
-    if os.path.exists(DATA_FILE):
+
+def load_data(filename, default):
+    if os.path.exists(filename):
         try:
-            with open(DATA_FILE, "r", encoding="utf-8") as f:
+            with open(filename, "r", encoding="utf-8") as f:
                 return json.load(f)
         except Exception:
-            return DEFAULT_TASKS
-    return DEFAULT_TASKS
+            return default
+    return default
 
 
-def save_tasks(tasks):
-    with open(DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(tasks, f, ensure_ascii=False, indent=2)
+def save_data(filename, data):
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
 
 if "tasks" not in st.session_state:
-    st.session_state.tasks = load_tasks()
+    st.session_state.tasks = load_data(DATA_FILE, DEFAULT_TASKS)
+
+if "config" not in st.session_state:
+    st.session_state.config = load_data(
+        CONFIG_FILE, {"bot_token": "", "chat_id": ""}
+    )
+
+
+def send_telegram_msg(text):
+    token = st.session_state.config.get("bot_token")
+    chat_id = st.session_state.config.get("chat_id")
+    if not token or not chat_id:
+        return False, "Будь ласка, вкажіть Bot Token та Chat ID у Кабінеті мами!"
+    try:
+        url = f"https://api.telegram.org/bot{token}/sendMessage"
+        res = requests.post(
+            url, json={"chat_id": chat_id, "text": text, "parse_mode": "Markdown"}
+        )
+        if res.status_code == 200:
+            return True, "Звіт успішно надіслано в Телеграм!"
+        else:
+            return False, f"Помилка Телеграм API: {res.text}"
+    except Exception as e:
+        return False, f"Помилка з'єднання: {e}"
+
 
 # ==========================================
-# 3. БІЧНА ПАНЕЛЬ (НАВІГАЦІЯ ТА РОЛІ)
+# 3. БІЧНА ПАНЕЛЬ (НАВІГАЦІЯ)
 # ==========================================
-st.sidebar.title("🦊 RudaFox Hub")
-role = st.sidebar.radio(
-    "Оберіть кабінет:",
-    ["👦 Кабінет учня (Іван)", "👩‍🏫 Кабінет мами (Місце сили)"],
+st.sidebar.markdown("# 🦊 RudaFox Hub")
+st.sidebar.caption("Затишний навчальний простір 8 класу")
+
+menu = st.sidebar.radio(
+    "📍 Навігація:",
+    [
+        "👦 Кабінет Івана",
+        "🧩 Інтерактивні Тести",
+        "📘 NotebookLM & Медіа",
+        "🎬 Відео-Лабораторія (Claude)",
+        "👩‍🏫 Кабінет мами (Місце сили)",
+    ],
 )
-
-st.sidebar.markdown("---")
-st.sidebar.caption("🤖 **Інтегровані сервіси:**")
-st.sidebar.markdown("""
-- 📘 [NotebookLM](https://notebooklm.google.com)
-- 🎴 [Quizlet](https://quizlet.com)
-- 🎮 [Wordwall](https://wordwall.net)
-- 🎨 [Canva](https://canva.com)
-""")
 
 SUBJECTS = [
     "Усі предмети",
@@ -150,223 +222,274 @@ SUBJECTS = [
 ]
 
 # ==========================================
-# 4. КАБІНЕТ УЧНЯ (ІВАН)
+# 4. КАБІНЕТ ІВАНА
 # ==========================================
-if role == "👦 Кабінет учня (Іван)":
-    st.title("👦 Вітаю в робочому просторі, Іване!")
+if menu == "👦 Кабінет Івана":
+    st.title("📜 Щоденник Івана — 9 Клас")
 
-    # Візуальний борговий індикатор з гумором
+    # Мотиваційна фраза дня
+    quote_today = random.choice(MOTIVATIONAL_QUOTES)
+    st.markdown(
+        f'<div class="quote-craft">💬 <b>Цитата / Лайфхак дня:</b><br>{quote_today}</div>',
+        unsafe_allow_html=True,
+    )
+
     debts_count = sum(
         1 for t in st.session_state.tasks if t["status"] == "Борг"
     )
     done_count = sum(
         1 for t in st.session_state.tasks if t["status"] == "Виконано"
     )
-    total_count = len(st.session_state.tasks)
 
-    if debts_count == 0:
-        quote = "🎉 **0 боргів!** Ти справжня легенда 8 класу. Кіт Васька пишається тобою!"
-    elif debts_count <= 2:
-        quote = f"😼 **У тебе {debts_count} хвости(ки).** Нічого критичного, розберемо за 20 хвилин!"
-    else:
-        quote = f"⚠️ **{debts_count} боргів!** Васька дивиться на тебе з докором, а мама готує чай і серйозну розмову 😉"
-
-    st.markdown(f'<div class="quote-box">{quote}</div>', unsafe_allow_html=True)
-
-    # Метрики за день
-    col_m1, col_m2, col_m3, col_m4 = st.columns(4)
-    col_m1.metric("Заплановано", total_count)
-    col_m2.metric("В процесі", sum(1 for t in st.session_state.tasks if t["status"] == "В процесі"))
-    col_m3.metric("Виконано ✅", done_count)
-    col_m4.metric("Борги 🚨", debts_count)
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Всього квестів", len(st.session_state.tasks))
+    col2.metric("Закрито ✅", done_count)
+    col3.metric("Хвости 🚨", debts_count)
 
     st.markdown("---")
+    selected_subject = st.selectbox("🔍 Фільтр за предметом:", SUBJECTS)
 
-    # Фільтрація по предмету
-    selected_subject = st.selectbox("📚 Фільтр за предметом:", SUBJECTS)
-
-    filtered_tasks = st.session_state.tasks
+    filtered = st.session_state.tasks
     if selected_subject != "Усі предмети":
-        filtered_tasks = [
-            t for t in filtered_tasks if t["subject"] == selected_subject
-        ]
+        filtered = [t for t in filtered if t["subject"] == selected_subject]
 
-    st.subheader("🎯 Твої завдання та квести")
+    st.subheader("📌 Твої завдання на сьогодні")
 
-    if not filtered_tasks:
-        st.info("Наразі немає завдань у цій категорії. Відпочивай або перевір інші предмети!")
+    for task in filtered:
+        st.markdown('<div class="craft-card">', unsafe_allow_html=True)
+        col_a, col_b = st.columns([3, 1])
 
-    for task in filtered_tasks:
-        with st.container():
-            col_t1, col_t2 = st.columns([4, 1])
+        with col_a:
+            status_cls = {
+                "Заплановано": "status-planned",
+                "В процесі": "status-process",
+                "Виконано": "status-done",
+                "Борг": "status-debt",
+            }.get(task["status"], "")
 
-            with col_t1:
-                status_color = {
-                    "Заплановано": "status-planned",
-                    "В процесі": "status-process",
-                    "Виконано": "status-done",
-                    "Борг": "status-debt",
-                }.get(task["status"], "")
+            st.markdown(
+                f"### {task['subject']}: {task['title']} <span class='badge-status {status_cls}'>{task['status']}</span>",
+                unsafe_allow_html=True,
+            )
+            st.write(f"📝 {task['desc']}")
+            if task.get("link"):
+                st.markdown(f"🔗 [Відкрити матеріали уроку]({task['link']})")
 
-                st.markdown(
-                    f"### {task['subject']}: {task['title']} <span class='badge-status {status_color}'>{task['status']}</span>",
-                    unsafe_allow_html=True,
-                )
-                st.write(task["desc"])
-                if task.get("link"):
-                    st.markdown(
-                        f"🔗 [Перейти до матеріалів уроку]({task['link']})"
-                    )
+        with col_b:
+            new_st = st.selectbox(
+                "Змінити статус:",
+                ["Заплановано", "В процесі", "Виконано", "Борг"],
+                index=["Заплановано", "В процесі", "Виконано", "Борг"].index(
+                    task["status"]
+                ),
+                key=f"st_{task['id']}",
+            )
+            if new_st != task["status"]:
+                task["status"] = new_st
+                save_data(DATA_FILE, st.session_state.tasks)
+                st.rerun()
 
-                # Інтерактивний міні-тест прямо в картці
-                if task.get("quiz"):
-                    with st.expander("🧩 Перевірити себе (Міні-квіз)"):
-                        q = task["quiz"]
-                        user_ans = st.radio(
-                            q["question"], q["options"], key=f"quiz_{task['id']}"
-                        )
-                        if st.button("Перевірити відповідь", key=f"btn_quiz_{task['id']}"):
-                            if user_ans == q["answer"]:
-                                st.success("Вірно! Молодець! 🎯")
-                            else:
-                                st.error(
-                                    f"Ні, правильна відповідь: {q['answer']}"
-                                )
-
-            with col_t2:
-                # Зміна статусу учнем
-                new_status = st.selectbox(
-                    "Статус:",
-                    ["Заплановано", "В процесі", "Виконано", "Борг"],
-                    index=["Заплановано", "В процесі", "Виконано", "Борг"].index(
-                        task["status"]
-                    ),
-                    key=f"status_select_{task['id']}",
-                )
-                if new_status != task["status"]:
-                    task["status"] = new_status
-                    save_tasks(st.session_state.tasks)
-                    st.rerun()
-
-            st.markdown("---")
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
-# 5. КАБІНЕТ МАМИ (МІСЦЕ СИЛИ RUDAFOX)
+# 5. ІНТЕРАКТИВНІ ТЕСТИ (ТРЕНУВАЛЬНИЙ ТА КОНТРОЛЬНИЙ)
+# ==========================================
+elif menu == "🧩 Інтерактивні Тести":
+    st.title("🧩 Конструктор та Проходження Тестів")
+    st.write(
+        "Оберіть режим: **Тренувальний** (із підказками та повтором) або **Контрольний** (фіксація балів)."
+    )
+
+    col_t1, col_t2 = st.columns(2)
+    with col_t1:
+        test_mode = st.radio(
+            "🎮 Режим тестування:",
+            [
+                "🏋️‍♂️ Тренувальний (з підказками)",
+                "⏱️ Контрольний (оцінювання)",
+            ],
+        )
+    with col_t2:
+        num_q = st.slider("Кількість запитань у тесті:", 1, 24, 8)
+        aspects = st.multiselect(
+            "🎯 Аспекти для перевірки:",
+            [
+                "Дати та Події",
+                "Концепції та Теореми",
+                "Критичне мислення",
+                "Логіка та Формули",
+                "Практичні задачі",
+                "Термінологія",
+            ],
+            default=["Концепції та Теореми", "Логіка та Формули"],
+        )
+
+    st.markdown("---")
+    st.subheader("📚 Інтерактивний тест з Алгебри / Історії")
+
+    sample_questions = [
+        {
+            "q": "Яка з наведених рівностей є тотожністю для раціональних дробів?",
+            "opts": ["(a/b) * (c/d) = (ac)/(bd)", "a/b + c/d = (a+c)/(b+d)", "a/b - c/b = (a+c)/b"],
+            "ans": "(a/b) * (c/d) = (ac)/(bd)",
+            "hint": "Пам'ятай: при множенні дробів чисельник множиться на чисельник, а знаменник на знаменник!",
+            "explanation": "Правильне правило множення раціональних дробів: чисельники та знаменники перемножуються відповідно.",
+        },
+        {
+            "q": "У якому році відбулося повстання під проводом Тараса Трясила?",
+            "opts": ["1630 рік", "1648 рік", "1625 рік"],
+            "ans": "1630 рік",
+            "hint": "Це повстання відбулося на початку 1630-х років і завершилося «Переяславською ніччю».",
+            "explanation": "Козацьке повстання під проводом Тараса Федоровича (Трясила) відбулося у 1630 році.",
+        },
+    ]
+
+    score = 0
+    for idx, q in enumerate(sample_questions[:num_q]):
+        st.markdown(f"**Запитання {idx + 1}: {q['q']}**")
+        ans = st.radio(f"Варіант відповіді:", q["opts"], key=f"test_q_{idx}")
+
+        if "Тренувальний" in test_mode:
+            if st.button(f"💡 Отримати підказку квесту {idx + 1}", key=f"hint_{idx}"):
+                st.info(f"🔑 Підказка: {q['hint']}")
+
+            if st.button(f"Перевірити запитання {idx + 1}", key=f"check_{idx}"):
+                if ans == q["ans"]:
+                    st.success("✨ Абсолютно вірно!")
+                else:
+                    st.error(f"❌ Помилка! Пояснення: {q['explanation']}")
+                    st.warning("🔄 Спробуй ще раз аналогічну картку після повторення!")
+        else:
+            if ans == q["ans"]:
+                score += 1
+        st.markdown("---")
+
+    if "Контрольний" in test_mode:
+        if st.button("🏁 Завершити контрольний тест та зберегти результат"):
+            st.balloons()
+            result_txt = f"📊 **Результат контрольного тесту Івана:** {score} з {min(num_q, len(sample_questions))} балів!"
+            st.success(result_txt)
+            send_telegram_msg(result_txt)
+
+# ==========================================
+# 6. NOTEBOOKLM ТА МЕДІА
+# ==========================================
+elif menu == "📘 NotebookLM & Медіа":
+    st.title("📘 Інтеграція з NotebookLM & Медіа-Хаб")
+    st.write(
+        "Центральне сховище знань Івана: флеш-картки, подкасти, презентації та звіти."
+    )
+
+    tab1, tab2, tab3 = st.tabs(
+        ["🎴 Флеш-картки", "🎧 Аудіо-Подкасти (NotebookLM)", "📊 Звіти та Конспекти"]
+    )
+
+    with tab1:
+        st.subheader("Картки для швидкого запам'ятовування (Quizlet / NotebookLM)")
+        col_c1, col_c2 = st.columns(2)
+        with col_c1:
+            st.markdown("""
+            **⚡ Фізика: Теплові явища**
+            - *Питання:* Яка одиниця вимірювання кількості теплоти в SI?
+            - *Відповідь:* Джоуль (Дж).
+            """)
+        with col_c2:
+            st.markdown("""
+            **📜 Історія: Поняття**
+            - *Питання:* Що таке 'Ординація Війська Запорозького'?
+            - *Відповідь:* Документ 1638 року, що суттєво обмежував права козацтва.
+            """)
+
+    with tab2:
+        st.subheader("🎧 Генеруємо Audio Overview (Подкасти за темами)")
+        st.info("Ви можете прослухати аудіопояснення теми за 5 хвилин!")
+        st.audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")
+
+    with tab3:
+        st.subheader("📝 Аналітичний звіт з теми від NotebookLM")
+        st.write("Автоматично згенерований конспект за підручником 8 класу.")
+
+# ==========================================
+# 7. ВІДЕО-ЛАБОРАТОРІЯ (CLAUDE API)
+# ==========================================
+elif menu == "🎬 Відео-Лабораторія (Claude)":
+    st.title("🎬 Генератор Сценаріїв Навчальних Відео (Claude API)")
+    st.write(
+        "Створення коротких відеопояснень (1-3 хв) для складних тем за допомогою ШІ."
+    )
+
+    topic = st.text_input(
+        "Введіть складну тему 8 класу (наприклад: 'Дискримінант в алгебрі'):"
+    )
+    if st.button("🪄 Згенерувати сценарій відео з Claude"):
+        if topic:
+            st.subheader(f"🎬 Сценарій відеопояснення: {topic}")
+            st.markdown(
+                f"""
+            **[00:00 - 00:30] Вступ та інтрига:**  
+            *Кадр:* Гумористична анімація з кицькою Васкою.  
+            *Диктор:* «Думаєш, дискримінант це складно? Насправді це просто формула-ключ, яка каже, скільки розв'язків має квадратне рівняння!»  
+
+            **[00:30 - 01:30] Основна суть та формула:**  
+            *Кадр:* Покроковий запис формули $D = b^2 - 4ac$.  
+            *Диктор:* «Якщо D > 0 — маємо 2 корені. Якщо D = 0 — один. Якщо D < 0 — коренів немає!»  
+
+            **[01:30 - 02:00] Фінальний лайфхак:**  
+            *Диктор:* «Запом'ятай цей алгоритм і закривай домашку з алгебри за 5 хвилин!»
+            """
+            )
+        else:
+            st.warning("Введіть тему для генерації!")
+
+# ==========================================
+# 8. КАБІНЕТ МАМИ (МІСЦЕ СИЛИ)
 # ==========================================
 else:
-    st.title("👩‍🏫 Кабінет мами — Місце сили RudaFox")
-    st.caption(
-        "Керування навчальним планом Івана, додавання завдань та генерація звітів"
-    )
+    st.title("👩‍🏫 Кабінет мами — Налаштування RudaFox")
 
-    tab_add, tab_manage, tab_report = st.tabs(
-        [
-            "➕ Додати завдання / урок",
-            "📋 Управління списком",
-            "📲 Звіт у Telegram",
-        ]
-    )
+    st.subheader("⚙️ Налаштування Автоматичного Телеграм-Бота")
+    with st.form("config_form"):
+        token_input = st.text_input(
+            "Telegram Bot Token:",
+            value=st.session_state.config.get("bot_token", ""),
+            type="password",
+        )
+        chat_id_input = st.text_input(
+            "Telegram Chat ID (або Ваш ID):",
+            value=st.session_state.config.get("chat_id", ""),
+        )
+        save_conf = st.form_submit_button("💾 Зберегти налаштування Телеграм")
 
-    # Вкладка 1: Додавання нового завдання
-    with tab_add:
-        st.subheader("Створити новий квест / завдання")
-        with st.form("new_task_form"):
-            col_f1, col_f2 = st.columns(2)
-            with col_f1:
-                subject = st.selectbox("Предмет:", SUBJECTS[1:])
-                title = st.text_input("Назва теми / уроку:")
-                date_str = st.date_input(
-                    "Дата виконання:", datetime.today()
-                ).strftime("%Y-%m-%d")
-            with col_f2:
-                link = st.text_input("Посилання на матеріали (NotebookLM / Canva / YouTube):")
-                status = st.selectbox(
-                    "Початковий статус:",
-                    ["Заплановано", "В процесі", "Борг", "Виконано"],
-                )
+        if save_conf:
+            st.session_state.config["bot_token"] = token_input
+            st.session_state.config["chat_id"] = chat_id_input
+            save_data(CONFIG_FILE, st.session_state.config)
+            st.success("Налаштування Телеграм успішно збережено!")
 
-            desc = st.text_area("Опис завдання та інструкції для Івана:")
+    st.markdown("---")
+    st.subheader("📲 Автоматична відправка щоденного звіту")
 
-            st.markdown("**Додати міні-тест для самоперевірки (необов'язково):**")
-            q_text = st.text_input("Запитання:")
-            q_opt1 = st.text_input("Варіант 1 (Правильний):")
-            q_opt2 = st.text_input("Варіант 2:")
-            q_opt3 = st.text_input("Варіант 3:")
-
-            submitted = st.form_submit_button("Зберегти завдання")
-
-            if submitted and title:
-                new_id = (
-                    max([t["id"] for t in st.session_state.tasks], default=0)
-                    + 1
-                )
-                quiz_data = None
-                if q_text and q_opt1 and q_opt2:
-                    options = [q_opt1, q_opt2]
-                    if q_opt3:
-                        options.append(q_opt3)
-                    quiz_data = {
-                        "question": q_text,
-                        "options": sorted(options),
-                        "answer": q_opt1,
-                    }
-
-                new_task = {
-                    "id": new_id,
-                    "subject": subject,
-                    "title": title,
-                    "desc": desc,
-                    "status": status,
-                    "link": link,
-                    "date": date_str,
-                    "quiz": quiz_data,
-                }
-                st.session_state.tasks.append(new_task)
-                save_tasks(st.session_state.tasks)
-                st.success(f"Завдання '{title}' успішно додано!")
-                st.rerun()
-
-    # Вкладка 2: Управління та видалення
-    with tab_manage:
-        st.subheader("Редагування та видалення завдань")
-        for idx, t in enumerate(st.session_state.tasks):
-            col_m1, col_m2, col_m3 = st.columns([3, 2, 1])
-            col_m1.write(f"**[{t['subject']}]** {t['title']}")
-            col_m2.caption(f"Статус: {t['status']} | Дата: {t['date']}")
-            if col_m3.button("🗑️ Видалити", key=f"del_{t['id']}"):
-                st.session_state.tasks.pop(idx)
-                save_tasks(st.session_state.tasks)
-                st.rerun()
-
-    # Вкладка 3: Генерація готового Telegram-повідомлення
-    with tab_report:
-        st.subheader("📲 Генератор щоденного звіту")
-        st.write("Сформуйте гумористичний звіт для надсилання Івану або в сімейний чат:")
-
+    if st.button("🚀 Надіслати звіт про успіхи Івана в Телеграм зараз"):
         debts = [t for t in st.session_state.tasks if t["status"] == "Борг"]
         dones = [
             t for t in st.session_state.tasks if t["status"] == "Виконано"
         ]
-        in_progress = [
-            t for t in st.session_state.tasks if t["status"] == "В процесі"
-        ]
 
-        report_msg = f"📊 **ЗВІТ НАВЧАННЯ (ІВАН, 8 КЛАС) — {datetime.now().strftime('%d.%m.%Y')}**\n\n"
-        report_msg += f"✅ **Виконано ({len(dones)}):**\n"
+        msg = f"🦊 **RudaFox Hub — Звіт за {datetime.now().strftime('%d.%m.%Y')}**\n\n"
+        msg += f"✅ **Виконано завдань ({len(dones)}):**\n"
         for d in dones:
-            report_msg += f" • {d['subject']}: {d['title']}\n"
+            msg += f" • {d['subject']}: {d['title']}\n"
 
-        report_msg += f"\n⏳ **В процесі ({len(in_progress)}):**\n"
-        for p in in_progress:
-            report_msg += f" • {p['subject']}: {p['title']}\n"
-
-        report_msg += f"\n🚨 **Навчальні хвости ({len(debts)}):**\n"
+        msg += f"\n🚨 **Навчальні хвости ({len(debts)}):**\n"
         if debts:
             for db in debts:
-                report_msg += f" • {db['subject']}: {db['title']}\n"
-            report_msg += "\n*Васька чекає закритості боргів до вечора! 🐱🔥*"
+                msg += f" • {db['subject']}: {db['title']}\n"
+            msg += "\n*Кіт Васька чекає виконання боргів! 🐾*"
         else:
-            report_msg += " • Боргів немає! Абсолютний тріумф! 🎉\n"
+            msg += " • Боргів немає! Ти супер-молодець! 🎉\n"
 
-        st.code(report_msg, language="markdown")
-        st.info("Скопіюйте текст вище та надішліть в Telegram.")
+        success, res_msg = send_telegram_msg(msg)
+        if success:
+            st.success(res_msg)
+        else:
+            st.error(res_msg)

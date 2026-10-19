@@ -6,7 +6,7 @@ import requests
 import streamlit as st
 
 # ==========================================
-# 1. ТЕМИ ОФОРМЛЕННЯ ТА ПОВНА ГАРМОНІЗАЦІЯ ШРИФТІВ (ВКЛЮЧАЮЧИ БІЧНУ ПАНЕЛЬ)
+# 1. ТЕМИ ОФОРМЛЕННЯ ТА CSS (З ЕДИНИМИ ШРИФТАМИ)
 # ==========================================
 st.set_page_config(
     page_title="RudaFox - Навчальний Хаб 9 Клас",
@@ -23,7 +23,6 @@ THEMES = {
             font-family: 'Comfortaa', cursive, sans-serif !important;
             background-color: #F5EBE0 !important;
             color: #4A3525 !important;
-            line-height: 1.6;
         }
         .stApp {
             background: #F5EBE0;
@@ -38,15 +37,11 @@ THEMES = {
             font-family: 'Comfortaa', cursive, sans-serif !important;
             color: #4A3525 !important;
         }
-        h1, h2, h3, [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2 {
+        h1, h2, h3, [data-testid="stSidebar"] h1 {
             font-family: 'Caveat', cursive !important;
             color: #3E2723 !important;
             font-weight: 700 !important;
         }
-        h1 { font-size: 2.6rem !important; }
-        h2 { font-size: 2.0rem !important; }
-        h3 { font-size: 1.5rem !important; }
-        
         .craft-card {
             background-color: #FFFDF9;
             border: 2px dashed #B08968;
@@ -59,25 +54,10 @@ THEMES = {
             background-color: #FFF8E1;
             border: 2px solid #E07A5F;
             border-radius: 14px;
-            padding: 18px 22px;
+            padding: 18px;
             color: #5C3D2E;
-            font-size: 0.95rem;
             margin-bottom: 22px;
-            box-shadow: 2px 2px 0px #E07A5F;
         }
-        .badge-status {
-            padding: 6px 14px;
-            border-radius: 12px;
-            font-family: 'Comfortaa', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 700;
-            display: inline-block;
-        }
-        .status-planned { background-color: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
-        .status-process { background-color: #FFF8E1; color: #E65100; border: 1px solid #FFE082; }
-        .status-done { background-color: #E8F5E9; color: #2E7D32; border: 1px solid #A5D6A7; }
-        .status-debt { background-color: #FFEBEE; color: #C62828; border: 1px solid #EF9A9A; }
-
         .stButton>button {
             border-radius: 12px !important;
             border: 2px solid #4A3525 !important;
@@ -85,13 +65,7 @@ THEMES = {
             color: #FFFFFF !important;
             font-family: 'Comfortaa', sans-serif !important;
             font-weight: 700 !important;
-            padding: 8px 18px !important;
             box-shadow: 3px 3px 0px #4A3525 !important;
-        }
-        .stButton>button:hover {
-            transform: translate(-1px, -1px);
-            box-shadow: 4px 4px 0px #4A3525 !important;
-            background-color: #6B8E23 !important;
         }
     """,
     "🎮 Cyberpunk / Gaming": """
@@ -102,113 +76,17 @@ THEMES = {
             color: #F8FAFC !important;
         }
         .stApp { background: #0F172A; }
-        [data-testid="stSidebar"] {
-            background-color: #1E293B !important;
-            border-right: 1px solid #334155 !important;
-        }
-        [data-testid="stSidebar"] * {
-            font-family: 'Montserrat', sans-serif !important;
-            color: #F8FAFC !important;
-        }
-        h1, h2, h3 { color: #38BDF8 !important; font-weight: 700 !important; }
-        .craft-card {
-            background-color: #1E293B;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 18px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        .quote-craft {
-            background-color: #1E1B4B;
-            border-left: 4px solid #818CF8;
-            border-radius: 8px;
-            padding: 16px;
-            color: #E0E7FF;
-            margin-bottom: 20px;
-        }
-        .stButton>button {
-            border-radius: 8px !important;
-            border: none !important;
-            background-color: #0284C7 !important;
-            color: #FFFFFF !important;
-            font-weight: 600 !important;
-        }
-    """,
-    "☕ Lo-Fi Study Space": """
-        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap');
-        html, body, [class*="css"] {
-            font-family: 'Quicksand', sans-serif !important;
-            background-color: #EAE7DC !important;
-            color: #474747 !important;
-        }
-        .stApp { background: #EAE7DC; }
-        [data-testid="stSidebar"] {
-            background-color: #D8D3CD !important;
-        }
-        [data-testid="stSidebar"] * {
-            font-family: 'Quicksand', sans-serif !important;
-            color: #333333 !important;
-        }
-        h1, h2, h3 { color: #E85A4F !important; font-weight: 700 !important; }
-        .craft-card {
-            background-color: #F8F5F0;
-            border-radius: 14px;
-            padding: 20px;
-            margin-bottom: 18px;
-            border: 1px solid #D8D3CD;
-        }
-        .quote-craft {
-            background-color: #D8C3A5;
-            border-radius: 10px;
-            padding: 16px;
-            color: #333333;
-            margin-bottom: 20px;
-        }
-        .stButton>button {
-            border-radius: 10px !important;
-            border: none !important;
-            background-color: #E85A4F !important;
-            color: #FFFFFF !important;
-        }
-    """,
-    "⚡ Minimal Tech": """
-        html, body, [class*="css"] {
-            background-color: #FAFAFA !important;
-            color: #171717 !important;
-        }
-        .stApp { background: #FAFAFA; }
-        [data-testid="stSidebar"] {
-            background-color: #F5F5F5 !important;
-            border-right: 1px solid #E5E5E5 !important;
-        }
-        [data-testid="stSidebar"] * {
-            color: #171717 !important;
-        }
-        h1, h2, h3 { color: #0A0A0A !important; font-weight: 700 !important; }
-        .craft-card {
-            background-color: #FFFFFF;
-            border: 1px solid #E5E5E5;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 18px;
-        }
-        .quote-craft {
-            background-color: #F5F5F5;
-            border-left: 3px solid #171717;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-        .stButton>button {
-            border-radius: 6px !important;
-            background-color: #171717 !important;
-            color: #FFFFFF !important;
-        }
+        [data-testid="stSidebar"] { background-color: #1E293B !important; }
+        [data-testid="stSidebar"] * { color: #F8FAFC !important; }
+        h1, h2, h3 { color: #38BDF8 !important; }
+        .craft-card { background-color: #1E293B; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 18px; }
+        .quote-craft { background-color: #1E1B4B; border-left: 4px solid #818CF8; padding: 16px; color: #E0E7FF; margin-bottom: 20px; }
+        .stButton>button { background-color: #0284C7 !important; color: #FFFFFF !important; border: none !important; }
     """,
 }
 
 # ==========================================
-# 2. ФАЙЛИ ТА НАЛАШТУВАННЯ
+# 2. ФАЙЛИ ТА ЗБЕРЕЖЕННЯ
 # ==========================================
 DATA_FILE = "tasks_db.json"
 CONFIG_FILE = "config.json"
@@ -218,7 +96,8 @@ DEFAULT_TASKS = [
         "id": 1,
         "subject": "Географія",
         "title": "Чинники розміщення виробництв",
-        "desc": "Опрацювати підручник, переглянути презентацію в NotebookLM та пройти підсумковий тест.",
+        "desc": "Складові економічної географії: чому заводи будують біля сировини або біля споживачів.",
+        "content_body": "### 📖 Теоретичний конспект\nПри розміщенні підприємств враховують **сировинний, паливний, трудовий та споживчий чинники**. Для важкої металургії головним є орієнтація на руду та вугілля, а для пекарень — на споживача.",
         "status": "В процесі",
         "link": "https://notebooklm.google.com/notebook/3eb94634-62b1-4c57-8d6b-fe3bb2343692",
         "presentation_link": "https://notebooklm.google.com/notebook/3eb94634-62b1-4c57-8d6b-fe3bb2343692",
@@ -235,34 +114,9 @@ DEFAULT_TASKS = [
                     "Водний чинник",
                 ],
                 "answer": "Сировинний та споживчий",
-                "hint": "Потребує багато металу та ринок збуту.",
+                "hint": "Потребує металу та ринок збуту.",
                 "explanation": "Важке машинобудування орієнтується на бази металургії та споживача.",
-                "aspect": "Концепції",
-            },
-            {
-                "question": "Що таке наукоємність виробництва?",
-                "options": [
-                    "Орієнтація на наукові центри та кадрову базу",
-                    "Використання великих обсягів води",
-                    "Залежність від видобутку руди",
-                ],
-                "answer": "Орієнтація на наукові центри та кадрову базу",
-                "hint": "Подумай про розробку роботів та електроніки.",
-                "explanation": "Наукоємні галузі потребують високої кваліфікації робітників.",
-                "aspect": "Термінологія",
-            },
-            {
-                "question": "Який чинник є головним для текстильної промисловості?",
-                "options": [
-                    "Трудовий та сировинний",
-                    "Паливний чинник",
-                    "Екологічний чинник",
-                ],
-                "answer": "Трудовий та сировинний",
-                "hint": "Потрібна сировина та праця робітників.",
-                "explanation": "Текстильна промисловість є працемісткою галуззю.",
-                "aspect": "Концепції",
-            },
+            }
         ],
     }
 ]
@@ -271,7 +125,6 @@ TEEN_FOCUS_TIPS = [
     "🧠 **Лайфхак фокусу:** 25 хвилин інтенсивної роботи + 5 хвилин відпочинку (техніка Pomodoro) залишають максимум дофаміну на вечір.",
     "🎯 **Автономія:** Ти сам керуєш своїм розкладом. Закрий складні квести першими — і решта дня повністю твоя.",
     "💡 **Нейрофізіологія:** Складні завдання краще розбивати на 2-3 мікро-кроки. Мозок не любить невизначеності.",
-    "⚡ **Ефективність:** Якісна концентрація протягом 30 хвилин дає кращий результат, ніж 2 години відволікань.",
 ]
 
 
@@ -299,6 +152,7 @@ if "config" not in st.session_state:
         {
             "bot_token": "",
             "chat_id": "",
+            "gemini_api_key": "",
             "theme": "📜 Крафт & Скетч",
             "custom_css": "",
         },
@@ -314,7 +168,7 @@ st.markdown(
 
 
 # ==========================================
-# 3. TELEGRAM ЗВІТНІСТЬ ТА АВТОНОМНА ГЕНЕРАЦІЯ
+# 3. TELEGRAM ТА GEMINI ШІ-ГЕНЕРАЦІЯ
 # ==========================================
 def send_telegram_msg(text):
     token = st.session_state.config.get("bot_token")
@@ -334,33 +188,64 @@ def send_telegram_msg(text):
         return False, f"Помилка з'єднання: {e}"
 
 
-def generate_task_and_quiz(
-    subject, title, teacher_prompt, text_notes, aspects, num_q, mode
+def generate_lesson_with_gemini(
+    subject, title, teacher_prompt, raw_sources, aspects, num_q, mode
 ):
-    """Генерує опис та точно задану кількість тестових питань (до 24) за аспекти перевірки"""
-    if not aspects:
-        aspects = ["Концепції та Теореми"]
+    """Генерує конспект уроку та тестові питання через Gemini API або резервну логіку"""
+    api_key = st.session_state.config.get("gemini_api_key", "").strip()
 
+    system_prompt = f"""
+    Ти — досвідчений педагог для 9 класу. Твій стиль викладання: {teacher_prompt}.
+    Створи навчальний комплект для уроку '{title}' з предмета '{subject}'.
+    Згенеруй JSON об'єкт з ключами:
+    1. "desc": короткий мотивуючий опис завдання для учня (1-2 речення).
+    2. "content_body": цікавий, глибокий та структурований конспект уроку (Markdown).
+    3. "quiz": масив з {num_q} реальних запитань за аспекти ({', '.join(aspects)}).
+    Кожне питання має бути у форматі об'єкта з ключами: "question", "options" (масив з 3 варіантів), "answer" (строго точний варіант з варіантів), "hint" (корисна підказка), "explanation" (педагогічне пояснення).
+    Джерела та матеріали теми: {raw_sources}
+    """
+
+    if api_key:
+        try:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+            payload = {"contents": [{"parts": [{"text": system_prompt}]}]}
+            res = requests.post(url, json=payload, timeout=25)
+            if res.status_code == 200:
+                text_res = res.json()["candidates"][0]["content"]["parts"][0][
+                    "text"
+                ]
+                start = text_res.find("{")
+                end = text_res.rfind("}") + 1
+                parsed = json.loads(text_res[start:end])
+                return (
+                    parsed.get("desc", ""),
+                    parsed.get("content_body", ""),
+                    parsed.get("quiz", []),
+                )
+        except Exception:
+            pass
+
+    # Локальний резервний формат
     quiz_list = []
     for i in range(1, num_q + 1):
         asp = aspects[(i - 1) % len(aspects)]
         quiz_list.append(
             {
-                "question": f"Питання №{i} з теми '{title}' [Аспект: {asp}]",
+                "question": f"Тестове запитання №{i} за темою '{title}' ({asp})",
                 "options": [
-                    f"Ключова правильна відповідь {i}",
-                    f"Альтернативний варіант {i}A",
-                    f"Варіант {i}B",
+                    f"Правильна відповідь {i}",
+                    f"Варіант B{i}",
+                    f"Варіант C{i}",
                 ],
-                "answer": f"Ключова правильна відповідь {i}",
-                "hint": f"💡 Підказка для розв'язання питання №{i} ({asp}).",
-                "explanation": f"Детальне педагогічне пояснення правильної відповіді на питання №{i}.",
-                "aspect": asp,
+                "answer": f"Правильна відповідь {i}",
+                "hint": f"Підказка щодо {asp}.",
+                "explanation": f"Обґрунтування правильної відповіді №{i}.",
             }
         )
 
-    desc = f"Опрацювати тему '{title}' за наданими джерелами та матеріалами. {teacher_prompt}\n{text_notes}"
-    return desc, quiz_list
+    content_body = f"### 📖 Конспект уроку: {title}\n\nОпрацюйте надані джерела. {teacher_prompt}\n\n**Матеріали:**\n{raw_sources}"
+    desc = f"Вивчити тему '{title}' та пройти підсумковий тест."
+    return desc, content_body, quiz_list
 
 
 def build_interactive_html_test(quiz_list, mode, subject, title):
@@ -501,7 +386,11 @@ if role == "👦 Місце страждань та досягнень Іван�
                 f"### {task['subject']}: {task['title']} <span class='badge-status {status_cls}'>{task['status']}</span>",
                 unsafe_allow_html=True,
             )
-            st.write(f"📝 {task['desc']}")
+            st.write(f"📌 **Завдання:** {task['desc']}")
+
+            if task.get("content_body"):
+                with st.expander("📖 Читати теоретичний конспект уроку"):
+                    st.markdown(task["content_body"])
 
             if task.get("link"):
                 st.markdown(f"🔗 [Основні матеріали уроку]({task['link']})")
@@ -595,7 +484,6 @@ if role == "👦 Місце страждань та досягнень Іван�
                     score_pct = int((user_score / max_score) * 100)
                     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-                    # ТОЧНИЙ КАСКАДНИЙ ЗВІТ ЗІ СКРІНШОТА
                     tg_report = (
                         f"🦊 **ЗВІТ З МІСЦЯ СТРАЖДАНЬ ТА ДОСЯГНЕНЬ**\n\n"
                         f"📚 **Предмет:** {task['subject']}\n"
@@ -626,12 +514,12 @@ else:
             "🛠️ Конструктор Уроку",
             "📋 Управління уроками",
             "🎨 Кастомізація дизайну",
-            "⚙️ Налаштування Telegram",
+            "⚙️ Налаштування ШІ & Telegram",
         ]
     )
 
     with tab_create:
-        st.subheader("➕ Створити новий урок (з усіма джерелами)")
+        st.subheader("➕ Створити / Згенерувати урок")
 
         with st.form("teacher_lesson_form"):
             col_f1, col_f2 = st.columns(2)
@@ -655,28 +543,20 @@ else:
                 )
 
             st.markdown("---")
-            st.markdown("### 📚 Усі джерела матеріалів")
+            st.markdown("### 📚 Джерела та Матеріали")
             t_file = st.file_uploader(
-                "1. Завантажити файл джерела (PDF / TXT / DOCX):",
+                "Завантажити файл джерела (PDF / TXT / DOCX):",
                 type=["pdf", "txt", "docx"],
             )
-            raw_text = st.text_area(
-                "2. Скопійований конспект / текст теми вручну:"
-            )
-            t_links = st.text_input(
-                "3. Основне посилання (NotebookLM, сайт):"
-            )
-            t_pres = st.text_input(
-                "4. Посилання на Презентацію / Флеш-картки NotebookLM:"
-            )
-            t_video = st.text_input(
-                "5. Посилання на відео (YouTube, Vimeo, Drive):"
-            )
+            raw_text = st.text_area("Скопійований конспект / текст теми:")
+            t_links = st.text_input("Основне посилання (NotebookLM, сайт):")
+            t_pres = st.text_input("Посилання на Презентацію NotebookLM:")
+            t_video = st.text_input("Посилання на відео:")
 
             st.markdown("---")
-            st.markdown("### 🧩 Налаштування Тестування")
+            st.markdown("### 🤖 Бачення вчителя та Налаштування Тесту")
             teacher_prompt = st.text_area(
-                "Власний промпт для конспекту та питань:"
+                "Бачення вчителя (стиль, тон, ключові акценти):"
             )
 
             col_q1, col_q2 = st.columns(2)
@@ -686,7 +566,7 @@ else:
                 )
             with col_q2:
                 aspects = st.multiselect(
-                    "🎯 Аспекти перевірки знань (декілька одночасно):",
+                    "🎯 Аспекти перевірки знань:",
                     [
                         "Дати та Події",
                         "Концепції та Теореми",
@@ -698,7 +578,7 @@ else:
                     default=["Концепції та Теореми", "Термінологія"],
                 )
 
-            btn_save = st.form_submit_button("💾 Зберегти урок в хаб")
+            btn_save = st.form_submit_button("✨ Згенерувати комплект уроку")
 
             if btn_save and t_title:
                 mode_clean = (
@@ -710,13 +590,15 @@ else:
                     try:
                         file_str = t_file.read().decode("utf-8", errors="ignore")
                     except Exception:
-                        file_str = "Зміст завантаженого файлу"
+                        file_str = "Зміст файлу"
 
-                gen_desc, gen_quiz = generate_task_and_quiz(
+                full_sources = f"{raw_text}\n{file_str}"
+
+                gen_desc, gen_body, gen_quiz = generate_lesson_with_gemini(
                     subj,
                     t_title,
                     teacher_prompt,
-                    f"{raw_text}\n{file_str}",
+                    full_sources,
                     aspects,
                     num_q,
                     mode_clean,
@@ -731,6 +613,7 @@ else:
                     "subject": subj,
                     "title": t_title,
                     "desc": gen_desc,
+                    "content_body": gen_body,
                     "status": t_status,
                     "link": t_links,
                     "presentation_link": t_pres,
@@ -742,9 +625,7 @@ else:
                 }
                 st.session_state.tasks.append(new_task)
                 save_data(DATA_FILE, st.session_state.tasks)
-                st.success(
-                    f"✨ Урок '{t_title}' успішно додано з тестом на {len(gen_quiz)} питань!"
-                )
+                st.success(f"✨ Комплект уроку '{t_title}' успішно додано!")
                 st.rerun()
 
     with tab_manage:
@@ -781,8 +662,16 @@ else:
                 st.rerun()
 
     with tab_settings:
-        st.subheader("⚙️ Telegram Налаштування")
+        st.subheader("⚙️ Налаштування ШІ & Telegram")
         with st.form("settings_form"):
+            st.markdown("### 🔑 1. Ключ ШІ (Google Gemini API)")
+            g_key = st.text_input(
+                "Вставте сюди свій Gemini API Key (починається з AIzaSy...):",
+                value=st.session_state.config.get("gemini_api_key", ""),
+                type="password",
+            )
+            st.markdown("---")
+            st.markdown("### 📲 2. Сповіщення в Telegram")
             t_token = st.text_input(
                 "Telegram Bot Token:",
                 value=st.session_state.config.get("bot_token", ""),
@@ -792,8 +681,10 @@ else:
                 "Telegram Chat ID:",
                 value=st.session_state.config.get("chat_id", ""),
             )
-            if st.form_submit_button("💾 Зберегти налаштування"):
+            if st.form_submit_button("💾 Зберегти всі налаштування"):
+                st.session_state.config["gemini_api_key"] = g_key
                 st.session_state.config["bot_token"] = t_token
                 st.session_state.config["chat_id"] = t_chat
                 save_data(CONFIG_FILE, st.session_state.config)
-                st.success("Налаштування збережено!")
+                st.success("Налаштування збережено! ШІ повністю активовано.")
+                st.rerun()

@@ -6,7 +6,7 @@ import requests
 import streamlit as st
 
 # ==========================================
-# 1. ТЕМИ ОФОРМЛЕННЯ ТА ДИНАМІЧНИЙ CSS
+# 1. ТЕМИ ОФОРМЛЕННЯ ТА НАВЕДЕННЯ ЛАДУ В ШРИФТАХ
 # ==========================================
 st.set_page_config(
     page_title="RudaFox - Навчальний Хаб 9 Клас",
@@ -17,39 +17,156 @@ st.set_page_config(
 
 THEMES = {
     "📜 Крафт & Скетч": """
-        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Comfortaa:wght@400;600;700&display=swap');
-        html, body, [class*="css"] { font-family: 'Comfortaa', cursive, sans-serif; background-color: #F5EBE0 !important; color: #4A3525; }
-        .stApp { background: #F5EBE0; background-image: radial-gradient(#E6D5C3 1px, transparent 0); background-size: 24px 24px; }
-        h1, h2, h3 { font-family: 'Caveat', cursive !important; color: #3E2723 !important; }
-        .craft-card { background-color: #FFFDF9; border: 2px dashed #B08968; border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 4px 4px 0px #DDB892; }
-        .quote-craft { background-color: #FFF8E1; border: 2px solid #E07A5F; border-radius: 14px; padding: 16px 20px; color: #5C3D2E; margin-bottom: 20px; }
-        .stButton>button { border-radius: 12px !important; border: 2px solid #4A3525 !important; background-color: #81B29A !important; color: #FFFFFF !important; font-weight: 700 !important; }
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Comfortaa:wght@400;600;700&display=swap');
+        
+        html, body, [class*="css"] {
+            font-family: 'Comfortaa', cursive, sans-serif !important;
+            background-color: #F5EBE0 !important;
+            color: #4A3525 !important;
+            line-height: 1.6;
+        }
+        .stApp {
+            background: #F5EBE0;
+            background-image: radial-gradient(#E6D5C3 1.2px, transparent 0);
+            background-size: 24px 24px;
+        }
+        h1, h2, h3 {
+            font-family: 'Caveat', cursive !important;
+            color: #3E2723 !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.5px;
+        }
+        h1 { font-size: 2.6rem !important; margin-bottom: 0.5rem !important; }
+        h2 { font-size: 2.0rem !important; }
+        h3 { font-size: 1.6rem !important; }
+        
+        .craft-card {
+            background-color: #FFFDF9;
+            border: 2px dashed #B08968;
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 4px 4px 0px #DDB892;
+        }
+        .quote-craft {
+            background-color: #FFF8E1;
+            border: 2px solid #E07A5F;
+            border-radius: 14px;
+            padding: 18px 22px;
+            color: #5C3D2E;
+            font-size: 0.95rem;
+            margin-bottom: 22px;
+            box-shadow: 2px 2px 0px #E07A5F;
+        }
+        .stButton>button {
+            border-radius: 12px !important;
+            border: 2px solid #4A3525 !important;
+            background-color: #81B29A !important;
+            color: #FFFFFF !important;
+            font-family: 'Comfortaa', sans-serif !important;
+            font-weight: 700 !important;
+            padding: 8px 18px !important;
+            box-shadow: 3px 3px 0px #4A3525 !important;
+        }
+        .stButton>button:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px #4A3525 !important;
+            background-color: #6B8E23 !important;
+        }
     """,
     "🎮 Cyberpunk / Gaming": """
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
-        html, body, [class*="css"] { font-family: 'Montserrat', sans-serif; background-color: #0F172A !important; color: #F8FAFC; }
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+        html, body, [class*="css"] {
+            font-family: 'Montserrat', sans-serif !important;
+            background-color: #0F172A !important;
+            color: #F8FAFC !important;
+            line-height: 1.5;
+        }
         .stApp { background: #0F172A; }
-        h1, h2, h3 { color: #38BDF8 !important; text-shadow: 0 0 10px rgba(56,189,248,0.3); }
-        .craft-card { background-color: #1E293B; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-        .quote-craft { background-color: #1E1B4B; border-left: 4px solid #818CF8; border-radius: 8px; padding: 16px; color: #E0E7FF; margin-bottom: 20px; }
-        .stButton>button { border-radius: 8px !important; border: none !important; background-color: #0284C7 !important; color: #FFFFFF !important; font-weight: 600 !important; }
+        h1, h2, h3 { color: #38BDF8 !important; font-weight: 700 !important; }
+        .craft-card {
+            background-color: #1E293B;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .quote-craft {
+            background-color: #1E1B4B;
+            border-left: 4px solid #818CF8;
+            border-radius: 8px;
+            padding: 16px;
+            color: #E0E7FF;
+            margin-bottom: 20px;
+        }
+        .stButton>button {
+            border-radius: 8px !important;
+            border: none !important;
+            background-color: #0284C7 !important;
+            color: #FFFFFF !important;
+            font-weight: 600 !important;
+        }
     """,
     "☕ Lo-Fi Study Space": """
-        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap');
-        html, body, [class*="css"] { font-family: 'Quicksand', sans-serif; background-color: #EAE7DC !important; color: #8E8D8A; }
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap');
+        html, body, [class*="css"] {
+            font-family: 'Quicksand', sans-serif !important;
+            background-color: #EAE7DC !important;
+            color: #474747 !important;
+            line-height: 1.6;
+        }
         .stApp { background: #EAE7DC; }
-        h1, h2, h3 { color: #E85A4F !important; }
-        .craft-card { background-color: #F8F5F0; border-radius: 16px; padding: 20px; margin-bottom: 16px; border: 1px solid #D8D3CD; }
-        .quote-craft { background-color: #D8C3A5; border-radius: 12px; padding: 16px; color: #474747; margin-bottom: 20px; }
-        .stButton>button { border-radius: 12px !important; border: none !important; background-color: #E85A4F !important; color: #FFFFFF !important; }
+        h1, h2, h3 { color: #E85A4F !important; font-weight: 700 !important; }
+        .craft-card {
+            background-color: #F8F5F0;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 18px;
+            border: 1px solid #D8D3CD;
+        }
+        .quote-craft {
+            background-color: #D8C3A5;
+            border-radius: 10px;
+            padding: 16px;
+            color: #333333;
+            margin-bottom: 20px;
+        }
+        .stButton>button {
+            border-radius: 10px !important;
+            border: none !important;
+            background-color: #E85A4F !important;
+            color: #FFFFFF !important;
+            font-weight: 600 !important;
+        }
     """,
     "⚡ Minimal Tech": """
-        html, body, [class*="css"] { background-color: #FAFAFA !important; color: #171717; }
+        html, body, [class*="css"] {
+            background-color: #FAFAFA !important;
+            color: #171717 !important;
+            line-height: 1.5;
+        }
         .stApp { background: #FAFAFA; }
-        h1, h2, h3 { color: #0A0A0A !important; font-weight: 800 !important; }
-        .craft-card { background-color: #FFFFFF; border: 1px solid #E5E5E5; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
-        .quote-craft { background-color: #F5F5F5; border-left: 3px solid #171717; padding: 16px; margin-bottom: 20px; }
-        .stButton>button { border-radius: 6px !important; background-color: #171717 !important; color: #FFFFFF !important; }
+        h1, h2, h3 { color: #0A0A0A !important; font-weight: 700 !important; }
+        .craft-card {
+            background-color: #FFFFFF;
+            border: 1px solid #E5E5E5;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 18px;
+        }
+        .quote-craft {
+            background-color: #F5F5F5;
+            border-left: 3px solid #171717;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .stButton>button {
+            border-radius: 6px !important;
+            background-color: #171717 !important;
+            color: #FFFFFF !important;
+            font-weight: 600 !important;
+        }
     """,
 }
 
@@ -64,9 +181,10 @@ DEFAULT_TASKS = [
         "id": 1,
         "subject": "Географія",
         "title": "Чинники розміщення виробництв",
-        "desc": "Опрацювати матеріали уроку та пройти підсумковий тест.",
+        "desc": "Опрацювати матеріали уроку, переглянути презентацію в NotebookLM та пройти тест.",
         "status": "В процесі",
         "link": "https://notebooklm.google.com/notebook/3eb94634-62b1-4c57-8d6b-fe3bb2343692",
+        "presentation_link": "https://notebooklm.google.com/notebook/3eb94634-62b1-4c57-8d6b-fe3bb2343692",
         "video_url": "",
         "date": "2026-10-19",
         "aspects": ["Концепції", "Термінологія"],
@@ -80,8 +198,8 @@ DEFAULT_TASKS = [
                     "Водний чинник",
                 ],
                 "answer": "Сировинний та споживчий",
-                "hint": "Потребує металу та орієнтації на споживача.",
-                "explanation": "Важке машинобудування орієнтується на бази металургії та ринок збуту.",
+                "hint": "Потребує багато металу та ринок збуту.",
+                "explanation": "Важке машинобудування орієнтується на бази металургії та споживача.",
             }
         ],
     }
@@ -119,7 +237,6 @@ if "config" not in st.session_state:
         {
             "bot_token": "",
             "chat_id": "",
-            "claude_api_key": "",
             "theme": "📜 Крафт & Скетч",
             "custom_css": "",
         },
@@ -135,7 +252,7 @@ st.markdown(
 
 
 # ==========================================
-# 3. TELEGRAM ТА CLAUDE API
+# 3. TELEGRAM АВТО-ЗВІТНІСТЬ
 # ==========================================
 def send_telegram_msg(text):
     token = st.session_state.config.get("bot_token")
@@ -153,81 +270,6 @@ def send_telegram_msg(text):
             return False, f"Помилка Телеграм API: {res.text}"
     except Exception as e:
         return False, f"Помилка з'єднання: {e}"
-
-
-def generate_lesson_with_claude(
-    subject,
-    title,
-    teacher_prompt,
-    text_sources,
-    link_sources,
-    aspects,
-    num_questions,
-    mode,
-):
-    api_key = st.session_state.config.get("claude_api_key", "").strip()
-
-    system_instructions = (
-        f"Ти — досвідчений методист та педагог для учня 9 класу. "
-        f"Створи навчальне завдання та рівно {num_questions} тестових питань у форматі JSON. "
-        f"Аспекти перевірки знань: {', '.join(aspects)}. Режим: {mode}. Промпт: {teacher_prompt}."
-    )
-
-    if api_key.startswith("sk-ant"):
-        try:
-            headers = {
-                "x-api-key": api_key,
-                "anthropic-version": "2023-06-01",
-                "content-type": "application/json",
-            }
-            body = {
-                "model": "claude-3-5-sonnet-20241022",
-                "max_tokens": 2500,
-                "system": system_instructions,
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": f"Предмет: {subject}\nТема: {title}\nДжерела: {text_sources}\nПосилання: {link_sources}\nЗгенеруй JSON об'єкт з ключами desc (текст) та quiz (масив з {num_questions} об'єктів з question, options, answer, hint, explanation).",
-                    }
-                ],
-            }
-            response = requests.post(
-                "https://api.anthropic.com/v1/messages",
-                headers=headers,
-                json=body,
-                timeout=30,
-            )
-            if response.status_code == 200:
-                content = response.json()["content"][0]["text"]
-                start_idx = content.find("{")
-                end_idx = content.rfind("}") + 1
-                parsed = json.loads(content[start_idx:end_idx])
-                return (
-                    parsed.get(
-                        "desc", f"Опрацювати матеріали теми: {title}."
-                    ),
-                    parsed.get("quiz", []),
-                )
-        except Exception:
-            pass
-
-    questions = []
-    for i in range(1, num_questions + 1):
-        questions.append(
-            {
-                "question": f"Питання №{i} з теми '{title}' ({aspects[(i-1) % len(aspects)]})",
-                "options": [
-                    f"Правильний варіант {i}",
-                    f"Варіант B{i}",
-                    f"Варіант C{i}",
-                ],
-                "answer": f"Правильний варіант {i}",
-                "hint": f"Підказка до питання №{i}.",
-                "explanation": f"Детальне пояснення до питання №{i}.",
-            }
-        )
-    desc = f"Опрацювати тему '{title}'. Джерела: {link_sources}. {teacher_prompt}"
-    return desc, questions
 
 
 def build_interactive_html_test(quiz_list, mode, subject, title):
@@ -286,14 +328,17 @@ def build_interactive_html_test(quiz_list, mode, subject, title):
 
 
 # ==========================================
-# 4. БІЧНА ПАНЕЛЬ
+# 4. БІЧНА ПАНЕЛЬ (ОНОВЛЕНІ НАЗВИ ПРОСТОРІВ)
 # ==========================================
 st.sidebar.markdown("# 🦊 RudaFox Hub")
 st.sidebar.caption("🎓 Навчальний простір 9 класу")
 
 role = st.sidebar.radio(
-    "📍 Оберіть кабінет:",
-    ["👦 Кабінет Івана (Учень)", "👩‍🏫 Кабінет мами (Конструктор)"],
+    "📍 Оберіть простір:",
+    [
+        "👦 Місце страждань та досягнень Іванка Миколайовича",
+        "👩‍🏫 Місце сили RudaFox",
+    ],
 )
 
 SUBJECTS = [
@@ -314,10 +359,10 @@ SUBJECTS = [
 ]
 
 # ==========================================
-# 5. КАБІНЕТ ІВАНА
+# 5. МІСЦЕ СТРАЖДАНЬ ТА ДОСЯГНЕНЬ ІВАНКА МИКОЛАЙОВИЧА
 # ==========================================
-if role == "👦 Кабінет Івана (Учень)":
-    st.title("📜 Робочий простір Івана — 9 Клас")
+if role == "👦 Місце страждань та досягнень Іванка Миколайовича":
+    st.title("📜 Місце страждань та досягнень Іванка Миколайовича")
 
     st.markdown(
         f'<div class="quote-craft">{random.choice(TEEN_FOCUS_TIPS)}</div>',
@@ -368,7 +413,12 @@ if role == "👦 Кабінет Івана (Учень)":
             st.write(f"📝 {task['desc']}")
 
             if task.get("link"):
-                st.markdown(f"🔗 [Перейти до матеріалів]({task['link']})")
+                st.markdown(f"🔗 [Основні матеріали уроку]({task['link']})")
+
+            if task.get("presentation_link"):
+                st.markdown(
+                    f"📊 [Презентація / Флеш-картки NotebookLM]({task['presentation_link']})"
+                )
 
             if task.get("video_url"):
                 st.markdown(
@@ -454,6 +504,7 @@ if role == "👦 Кабінет Івана (Учень)":
                     score_pct = int((user_score / max_score) * 100)
                     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+                    # ТОЧНИЙ КАСКАДНИЙ ЗВІТ
                     tg_report = (
                         f"🦊 **ЗВІТ З МІСЦЯ СТРАЖДАНЬ ТА ДОСЯГНЕНЬ**\n\n"
                         f"📚 **Предмет:** {task['subject']}\n"
@@ -474,22 +525,22 @@ if role == "👦 Кабінет Івана (Учень)":
         st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
-# 6. КАБІНЕТ МАМИ
+# 6. МІСЦЕ СИЛИ RUDAFOX
 # ==========================================
 else:
-    st.title("👩‍🏫 Кабінет мами — «Місце сили RudaFox»")
+    st.title("👩‍🏫 Місце сили RudaFox")
 
     tab_create, tab_manage, tab_style, tab_settings = st.tabs(
         [
-            "🛠️ Генератор Уроків",
+            "🛠️ Конструктор Уроку",
             "📋 Управління уроками",
             "🎨 Кастомізація дизайну",
-            "⚙️ Налаштування API & Telegram",
+            "⚙️ Налаштування Telegram",
         ]
     )
 
     with tab_create:
-        st.subheader("➕ Створити / Згенерувати урок")
+        st.subheader("➕ Створити новий урок")
 
         with st.form("teacher_lesson_form"):
             col_f1, col_f2 = st.columns(2)
@@ -512,53 +563,43 @@ else:
                     ["Заплановано", "В процесі", "Борг", "Виконано"],
                 )
 
+            t_desc = st.text_area("Опис завдання для Івана:")
+
             st.markdown("---")
-            st.markdown("### 📚 Джерела матеріалів")
-            t_links = st.text_input(
-                "Посилання (NotebookLM, веб-сторінки, PDF):"
-            )
+            st.markdown("### 📚 Джерела та Презентації")
+            t_links = st.text_input("Основне посилання (NotebookLM, сайт):")
+            t_pres = st.text_input("Посилання на Презентацію NotebookLM:")
             t_video = st.text_input("Посилання на відео:")
-            raw_text = st.text_area("Текст конспекту або нотатки:")
 
             st.markdown("---")
-            st.markdown("### 🤖 Налаштування ШІ-Тестування")
-            teacher_prompt = st.text_area("Власний промпт для ШІ:")
+            st.markdown("### 🧩 Налаштування Тестування")
+            q_text = st.text_input("Запитання:")
+            q_opt1 = st.text_input("Варіант 1 (Правильний):")
+            q_opt2 = st.text_input("Варіант 2:")
+            q_opt3 = st.text_input("Варіант 3:")
+            q_hint = st.text_input("💡 Підказка:")
+            q_exp = st.text_area("💡 Пояснення відповіді:")
 
-            col_q1, col_q2 = st.columns(2)
-            with col_q1:
-                num_q = st.slider("Кількість питань (1 - 24):", 1, 24, 5)
-            with col_q2:
-                aspects = st.multiselect(
-                    "🎯 Аспекти перевірки знань:",
-                    [
-                        "Дати та Події",
-                        "Концепції та Теореми",
-                        "Критичне мислення",
-                        "Логіка та Формули",
-                        "Термінологія",
-                        "Практичні задачі",
-                    ],
-                    default=["Концепції та Теореми"],
-                )
+            btn_save = st.form_submit_button("💾 Зберегти урок в хаб")
 
-            btn_generate = st.form_submit_button(
-                "✨ Згенерувати урок та тест з Claude"
-            )
-
-            if btn_generate and t_title:
+            if btn_save and t_title:
                 mode_clean = (
                     "Тренувальний" if "Тренувальний" in t_mode else "Контрольний"
                 )
-                generated_desc, generated_quiz = generate_lesson_with_claude(
-                    subj,
-                    t_title,
-                    teacher_prompt,
-                    raw_text,
-                    f"{t_links} {t_video}",
-                    aspects,
-                    num_q,
-                    mode_clean,
-                )
+                quiz_obj = []
+                if q_text and q_opt1 and q_opt2:
+                    opts = [q_opt1, q_opt2]
+                    if q_opt3:
+                        opts.append(q_opt3)
+                    quiz_obj = [
+                        {
+                            "question": q_text,
+                            "options": sorted(opts),
+                            "answer": q_opt1,
+                            "hint": q_hint,
+                            "explanation": q_exp,
+                        }
+                    ]
 
                 new_id = (
                     max([t["id"] for t in st.session_state.tasks], default=0)
@@ -568,18 +609,18 @@ else:
                     "id": new_id,
                     "subject": subj,
                     "title": t_title,
-                    "desc": generated_desc,
+                    "desc": t_desc,
                     "status": t_status,
                     "link": t_links,
+                    "presentation_link": t_pres,
                     "video_url": t_video,
                     "mode": mode_clean,
                     "date": t_date,
-                    "aspects": aspects,
-                    "quiz": generated_quiz,
+                    "quiz": quiz_obj,
                 }
                 st.session_state.tasks.append(new_task)
                 save_data(DATA_FILE, st.session_state.tasks)
-                st.success(f"✨ Урок '{t_title}' успішно створено!")
+                st.success(f"✨ Урок '{t_title}' успішно додано!")
                 st.rerun()
 
     with tab_manage:
@@ -587,16 +628,14 @@ else:
         for idx, task in enumerate(st.session_state.tasks):
             col_m1, col_m2, col_m3 = st.columns([3, 2, 1])
             col_m1.write(f"**[{task['subject']}]** {task['title']}")
-            col_m2.caption(f"Питань: {len(task.get('quiz', []))}")
+            col_m2.caption(f"Питань у тесті: {len(task.get('quiz', []))}")
             if col_m3.button("🗑️ Видалити", key=f"del_task_{task['id']}"):
                 st.session_state.tasks.pop(idx)
                 save_data(DATA_FILE, st.session_state.tasks)
                 st.rerun()
 
     with tab_style:
-        st.subheader("🎨 Кастомізація дизайну та теми оформлення")
-        st.write("Оберіть готову тему або задайте власний стильовий промпт/CSS:")
-
+        st.subheader("🎨 Кастомізація дизайну")
         with st.form("style_form"):
             theme_choice = st.selectbox(
                 "Шаблон оформлення:",
@@ -606,7 +645,7 @@ else:
                 ),
             )
             custom_css_input = st.text_area(
-                "Власний CSS / Промпт кастомізації (наприклад: змінити колір кнопок чи фон):",
+                "Власний CSS / Стильовий промпт:",
                 value=st.session_state.config.get("custom_css", ""),
             )
 
@@ -618,13 +657,8 @@ else:
                 st.rerun()
 
     with tab_settings:
-        st.subheader("⚙️ Налаштування API та Telegram")
+        st.subheader("⚙️ Telegram Налаштування")
         with st.form("settings_form"):
-            claude_key = st.text_input(
-                "Claude (Anthropic) API Key:",
-                value=st.session_state.config.get("claude_api_key", ""),
-                type="password",
-            )
             t_token = st.text_input(
                 "Telegram Bot Token:",
                 value=st.session_state.config.get("bot_token", ""),
@@ -635,7 +669,6 @@ else:
                 value=st.session_state.config.get("chat_id", ""),
             )
             if st.form_submit_button("💾 Зберегти налаштування"):
-                st.session_state.config["claude_api_key"] = claude_key
                 st.session_state.config["bot_token"] = t_token
                 st.session_state.config["chat_id"] = t_chat
                 save_data(CONFIG_FILE, st.session_state.config)

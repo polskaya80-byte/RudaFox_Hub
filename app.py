@@ -9,131 +9,6 @@ import streamlit as st
 # 1. НАЛАШТУВАННЯ СТОРІНКИ ТА СКЕТЧ-ДИЗАЙНУ (CSS)
 # ==========================================
 st.set_page_config(
-    page_title="RudaFox - Крафтовий Навчальний Хаб 8 Клас",
-    page_icon="🦊",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
-
-# Крафтовий папір, затишні кольори та рукописні шрифти з Google Fonts
-st.markdown(
-    """
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Comfortaa:wght@400;600;700&display=swap');
-
-    html, body, [class*="css"]  {
-        font-family: 'Comfortaa', cursive, sans-serif;
-        background-color: #F5EBE0 !important;
-        color: #4A3525;
-    }
-
-    .stApp {
-        background: #F5EBE0;
-        background-image: radial-gradient(#E6D5C3 1px, transparent 0);
-        background-size: 24px 24px;
-    }
-
-    h1, h2, h3, h4 {
-        font-family: 'Caveat', cursive !important;
-        color: #3E2723 !important;
-        font-weight: 700 !important;
-    }
-
-    h1 { font-size: 2.8rem !important; }
-    h2 { font-size: 2.2rem !important; }
-    h3 { font-size: 1.8rem !important; }
-
-    /* Картки у скетч-стилі */
-    .craft-card {
-        background-color: #FFFDF9;
-        border: 2px dashed #B08968;
-        border-radius: 16px;
-        padding: 20px;
-        margin-bottom: 16px;
-        box-shadow: 4px 4px 0px #DDB892;
-    }
-
-    .quote-craft {
-        background-color: #FFF3E0;
-        border: 2px solid #E07A5F;
-        border-radius: 14px;
-        padding: 16px 20px;
-        font-family: 'Caveat', cursive;
-        font-size: 1.5rem;
-        color: #5C3D2E;
-        box-shadow: 3px 3px 0px #E07A5F;
-        margin-bottom: 20px;
-    }
-
-    .badge-status {
-        padding: 6px 14px;
-        border-radius: 12px;
-        font-family: 'Comfortaa', sans-serif;
-        font-size: 0.85rem;
-        font-weight: 700;
-        display: inline-block;
-    }
-    .status-planned { background-color: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
-    .status-process { background-color: #FFF8E1; color: #E65100; border: 1px solid #FFE082; }
-    .status-done { background-color: #E8F5E9; color: #2E7D32; border: 1px solid #A5D6A7; }
-    .status-debt { background-color: #FFEBEE; color: #C62828; border: 1px solid #EF9A9A; }
-
-    /* Кнопки у дудл-стилі */
-    .stButton>button {
-        border-radius: 12px !important;
-        border: 2px solid #4A3525 !important;
-        background-color: #81B29A !important;
-        color: #FFFFFF !important;
-        font-family: 'Comfortaa', sans-serif !important;
-        font-weight: 700 !important;
-        box-shadow: 3px 3px 0px #4A3525 !important;
-        transition: all 0.2s ease;
-    }
-    .stButton>button:hover {
-        transform: translate(-2px, -2px);
-        box-shadow: 5px 5px 0px #4A3525 !important;
-        background-color: #6B8E23 !important;
-    }
-    </style>
-""",
-    unsafe_allow_html=True,
-)
-
-# ==========================================
-# 2. БАЗА ДАНИХ ТА НАЛАШТУВАННЯ
-# ==========================================
-DATA_FILE = "tasks_db.json"
-CONFIG_FILE = "config.json"
-
-DEFAULT_TASKS = [
-    {
-        "id": 1,
-        "subject": "Алгебра",
-        "title": "Раціональні вирази та дроби",
-        "desc": "Переглянути конспект у NotebookLM та розв'язати вправи №1-5",
-        "status": "В процесі",
-        "link": "https://gemini.google.com/notebook/81ad84a5-0616-4065-a9f3-a2c6c9ab6096",
-        "date": "2026-10-19",
-        "aspects": ["Концепції", "Логіка"],
-    },
-    {
-        "id": 2,
-        "subject": "Історія України",
-        "title": "Козацько-селянські повстання 20-30-х рр. XVII ст.",
-        "desc": "Опрацювати Параграф 8 підручника та переглянути флеш-картки",
-        "status": "Заплановано",
-        "link": "https://notebooklm.google.com/notebook/cda44234-a2b8-4615-ac33-3429b324cc5d",
-        "date": "2026-10-20",import json
-import os
-import random
-from datetime import datetime
-import requests
-import streamlit as st
-
-# ==========================================
-# 1. НАЛАШТУВАННЯ СТОРІНКИ ТА СКЕТЧ-ДИЗАЙНУ (CSS)
-# ==========================================
-st.set_page_config(
     page_title="RudaFox - Навчальний Хаб 9 Клас",
     page_icon="🦊",
     layout="wide",
@@ -261,7 +136,7 @@ DEFAULT_TASKS = [
             "options": ["Франція", "Велика Британія", "США"],
             "answer": "Велика Британія",
             "hint": "Батьківщина парового двигуна.",
-            "explanation": "Велика Британія першою здійснить промисловий переворот.",
+            "explanation": "Велика Британія першою здійснила промисловий переворот.",
         },
     },
 ]
@@ -443,7 +318,7 @@ if role == "👦 Кабінет Івана (Учень)":
                     task["status"] = "Виконано"
                     save_data(DATA_FILE, st.session_state.tasks)
 
-                    # Розрахунок статистики для кастомного звіту
+                    # Розрахунок статистики
                     new_done_count = sum(
                         1
                         for t in st.session_state.tasks
@@ -458,7 +333,7 @@ if role == "👦 Кабінет Івана (Учень)":
                     )
                     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-                    # ФОРМУВАННЯ КАСКАДНОГО ЗВІТУ ЗІ СКРІНШОТА
+                    # ФОРМУВАННЯ ЗВІТУ ЗІ СКРІНШОТА
                     tg_report = (
                         f"🦊 **ЗВІТ З МІСЦЯ СТРАЖДАНЬ ТА ДОСЯГНЕНЬ**\n\n"
                         f"📚 **Предмет:** {task['subject']}\n"
@@ -566,7 +441,9 @@ else:
         for idx, task in enumerate(st.session_state.tasks):
             col_m1, col_m2, col_m3 = st.columns([3, 2, 1])
             col_m1.write(f"**[{task['subject']}]** {task['title']}")
-            col_m2.caption(f"Статус: {task['status']} | Режим: {task.get('mode', 'Контрольний')}")
+            col_m2.caption(
+                f"Статус: {task['status']} | Режим: {task.get('mode', 'Контрольний')}"
+            )
             if col_m3.button("🗑️ Видалити", key=f"del_task_{task['id']}"):
                 st.session_state.tasks.pop(idx)
                 save_data(DATA_FILE, st.session_state.tasks)
